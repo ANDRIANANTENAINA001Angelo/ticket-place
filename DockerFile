@@ -1,0 +1,31 @@
+# Utilise une image de base PHP avec Apache
+FROM php:8.2-apache
+
+# Définir le répertoire de travail
+WORKDIR /var/www/html
+
+# Installer les dépendances PHP et extensions nécessaires
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd
+
+# Installer Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copier le contenu du projet dans le conteneur
+COPY . .
+
+# Installer les dépendances de Laravel
+RUN composer install --optimize-autoloader --no-dev
+
+# Donner les permissions au répertoire de stockage et cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Exposer le port 80
+EXPOSE 80
+
+# Lancer Apache
+CMD ["apache2-foreground"]
