@@ -18,7 +18,14 @@ use Illuminate\Routing\Controller as BaseController;
  *          name="Apache 2.0",
  *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
  *      )
- * )
+ * ),
+ * @OA\SecurityScheme(
+ *         securityScheme="bearerAuth",
+ *         type="http",
+ *         scheme="bearer",
+ *         bearerFormat="JWT",
+ *         description="Enter your Bearer token in the format **Bearer &lt;token&gt;**"
+ *     )
  */
 
 
