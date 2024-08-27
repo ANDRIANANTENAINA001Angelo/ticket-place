@@ -1,5 +1,6 @@
 <?php
 
+use App\ApiResponse;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\UserController;
@@ -21,9 +22,14 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get("/app/failed-auth",function(){
+    return ApiResponse::error("Failed Authentication",401);
+})->name('failed-auth');
 
 Route::get("/users",[UserController::class,"index"]);
-
+Route::get("/users/{user}",[UserController::class,"show"])->middleware(['auth:sanctum']);
+Route::put("/users/{user}",[UserController::class,"update"])->middleware(['auth:sanctum']);
+Route::delete("/users/{user}",[UserController::class,"destroy"])->middleware(['auth:sanctum']);
 
 Route::post('/register', [RegisteredUserController::class, 'store']);
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);

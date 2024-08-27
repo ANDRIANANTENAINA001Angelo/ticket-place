@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Validator;
 
 class RegisteredUserController extends Controller
 {
@@ -78,6 +80,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'max:255','min:4'],
             'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
+            'type' => ['nullable','string',Rule::in("customer, organiser, administrator")],
         ]);
 
         $user = User::create([
@@ -88,14 +91,14 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        return ApiResponse::success([
+            $user
+        ],"User registered");
         // event(new Registered($user));
 
         // $token= $user->createToken("token");
         // $token= $token->plainTextToken;
 
-        return ApiResponse::success([
-            $user
-        ],"User created");
         // Auth::login($user);
 
         // return response()->noContent();

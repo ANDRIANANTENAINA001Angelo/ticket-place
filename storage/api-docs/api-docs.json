@@ -145,6 +145,102 @@
                     }
                 }
             }
+        },
+        "/api/users/{user_id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get One User",
+                "description": "return the users",
+                "operationId": "e10f96743f349605ddec7dd8f1a09324",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun user trouvé"
+                    },
+                    "500": {
+                        "description": "erreur interne serveur"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update one user",
+                "description": "update information of one user",
+                "operationId": "c64f78766f4915182147dd62bcc1e3f3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "fname": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lname": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "john.doe@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "0345992047"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "administrator"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun user trouvé"
+                    },
+                    "400": {
+                        "description": "donné incomplet"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete one user",
+                "description": "Delete the user",
+                "operationId": "8813fccf55a87ec7b1237ecdee00419f",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun user trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur interne serveur"
+                    }
+                }
+            }
         }
     },
     "components": {
