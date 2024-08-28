@@ -27,7 +27,7 @@ Route::get("/app/failed-auth",function(){
 })->name('failed-auth');
 
 Route::get("/users",[UserController::class,"index"]);
-Route::get("/users/{user}",[UserController::class,"show"])->middleware(['auth:sanctum']);
+Route::get("/users/{user}",[UserController::class,"show"]);
 Route::put("/users/{user}",[UserController::class,"update"])->middleware(['auth:sanctum']);
 Route::delete("/users/{user}",[UserController::class,"destroy"])->middleware(['auth:sanctum']);
 

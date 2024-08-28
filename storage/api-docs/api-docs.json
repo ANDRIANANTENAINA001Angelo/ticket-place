@@ -154,6 +154,17 @@
                 "summary": "Get One User",
                 "description": "return the users",
                 "operationId": "e10f96743f349605ddec7dd8f1a09324",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "ID of the user to show",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "successful operation"
@@ -173,6 +184,17 @@
                 "summary": "Update one user",
                 "description": "update information of one user",
                 "operationId": "c64f78766f4915182147dd62bcc1e3f3",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "ID of the user to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -229,6 +251,17 @@
                 "summary": "Delete one user",
                 "description": "Delete the user",
                 "operationId": "8813fccf55a87ec7b1237ecdee00419f",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "ID of the user to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "successful operation"

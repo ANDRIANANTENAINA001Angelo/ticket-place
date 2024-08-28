@@ -61,7 +61,16 @@ class UserController extends Controller
      *      tags={"Users"},
      *      summary="Get One User",
      *      description="return the users",
-     *          @OA\Response(
+     *      @OA\Parameter(
+ *          name="user_id",
+ *          in="path",
+ *          required=true,
+ *          @OA\Schema(
+ *              type="string"
+ *          ),
+ *          description="ID of the user to show"
+ *      ),
+     *     @OA\Response(
      *              response=200,
      *              description="successful operation"
      *          ),
@@ -103,7 +112,16 @@ class UserController extends Controller
      *      tags={"Users"},
      *      summary="Update one user",
      *      description="update information of one user",
-     *      @OA\RequestBody(
+     *      @OA\Parameter(
+ *          name="user_id",
+ *          in="path",
+ *          required=true,
+ *          @OA\Schema(
+ *              type="string"
+ *          ),
+ *          description="ID of the user to update"
+ *      ),
+     *       @OA\RequestBody(
     *          required=true,
     *          @OA\MediaType(
     *              mediaType="application/json",
@@ -197,6 +215,15 @@ class UserController extends Controller
      *      tags={"Users"},
      *      summary="Delete one user",
      *      description="Delete the user",
+     *       @OA\Parameter(
+ *          name="user_id",
+ *          in="path",
+ *          required=true,
+ *          @OA\Schema(
+ *              type="string"
+ *          ),
+ *          description="ID of the user to delete"
+ *      ),
      *          @OA\Response(
      *              response=200,
      *              description="successful operation"
