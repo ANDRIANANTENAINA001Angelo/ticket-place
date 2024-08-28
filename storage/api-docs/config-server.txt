@@ -1,0 +1,11 @@
+,
+    "servers": [
+      {
+        "url": "https://apid.c4m.mg/app/public/api",
+        "description":"Production Server"
+      },
+      {
+        "url": "http://localhost:8000",
+        "description":"Local Server"
+      }
+    ],
