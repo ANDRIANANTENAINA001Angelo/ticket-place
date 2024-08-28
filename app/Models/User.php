@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -44,4 +45,50 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    /**
+     * Get all of the Codes for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function codes(): HasMany
+    {
+        return $this->hasMany(Code::class);
+    }
+
+
+
+
+
+    public function IsOrganiser():bool{
+        if($this->type=="organiser"){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+     
+    public function IsCustomer():bool{
+        if($this->type=="customer"){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public function IsAdministrator():bool{
+        if($this->type=="administrator"){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+
+
+
 }

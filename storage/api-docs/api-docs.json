@@ -128,6 +128,128 @@
                 }
             }
         },
+        "/api/codes": {
+            "get": {
+                "tags": [
+                    "Codes"
+                ],
+                "summary": "Get All Info Code",
+                "description": "return list of the all code",
+                "operationId": "e24402fbc821a5e04a9143d4ad9be1c0",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/codes/{code_id}": {
+            "get": {
+                "tags": [
+                    "Codes"
+                ],
+                "summary": "Get One Code Info",
+                "description": "return the info of the code",
+                "operationId": "e467a65b2cfa89fc44af5c9c3da97dc0",
+                "parameters": [
+                    {
+                        "name": "code_id",
+                        "in": "path",
+                        "description": "ID of the code to show",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Codes"
+                ],
+                "summary": "Update code",
+                "description": "Update reduction code",
+                "operationId": "4c205b2ab6d92acf6a4bee9d99d50dcf",
+                "parameters": [
+                    {
+                        "name": "code_id",
+                        "in": "path",
+                        "description": "ID of the code to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "price": {
+                                        "type": "integer",
+                                        "example": "1000"
+                                    },
+                                    "expire_at": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-04-30"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "donné incomplet"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/generate-code": {
+            "post": {
+                "tags": [
+                    "Codes"
+                ],
+                "summary": "Generate new random code",
+                "description": "Generate new random reduction code",
+                "operationId": "6c9692e78f8424afd41df31821fa5316",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -274,15 +396,35 @@
                     }
                 }
             }
+        },
+        "/api/profile": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get profile info",
+                "description": "return the current user info",
+                "operationId": "4373251f8140344279ac32a1ac817cef",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "Erreur serveur"
+                    }
+                }
+            }
         }
     },
     "components": {
         "securitySchemes": {
             "bearerAuth": {
                 "type": "http",
-                "description": "Enter your Bearer token in the format **Bearer &lt;token&gt;**",
-                "bearerFormat": "JWT",
-                "scheme": "bearer"
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
             }
         }
     },
@@ -292,19 +434,17 @@
             "description": "Auth"
         },
         {
+            "name": "Codes",
+            "description": "Codes"
+        },
+        {
             "name": "Users",
             "description": "Users"
         }
     ],
-    "security": {
-        "0": {
+    "security": [
+        {
             "bearerAuth": []
-        },
-        "sanctum": {
-            "type": "apiKey",
-            "description": "Enter token in format (Bearer <token>)",
-            "name": "Authorization",
-            "in": "header"
         }
-    }
+    ]
 }

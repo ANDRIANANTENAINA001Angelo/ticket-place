@@ -6,6 +6,7 @@ use App\ApiResponse;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -178,31 +179,31 @@ class UserController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $data =  $request->validate([
-            'fname' => ['nullable', 'string', 'max:255'],
-            'lname' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['nullable', 'max:255','min:4'],
-            'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
-            'type' => ['nullable','string',Rule::in("customer, organiser, administrator")],
-        ]);
-        $user = User::find($id);
+        
+        try{
+            $data =  $request->validate([
+                'fname' => ['nullable', 'string', 'max:255'],
+                'lname' => ['nullable', 'string', 'max:255'],
+                'email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'password' => ['nullable', 'max:255','min:4'],
+                'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
+                'type' => ['nullable','string',Rule::in("customer", "organiser", "administrator")],
+            ]);
+            $user = User::find($id);
 
-        if(!$user){
-            return ApiResponse::error("User not found",404);
-        }
-        else{
-            try{
-                $user->update($data);
-                $user->save();
-
-                return ApiResponse::success($user,"User updated!");
+            if(!$user){
+                return ApiResponse::error("User not found",404);
             }
-            catch(Exception $e){
-                return ApiResponse::error("Error updating",400,$e->getMessage());
-            }
-        }
+            else{
+                    $user->update($data);
+                    $user->save();
 
+                    return ApiResponse::success($user,"User updated!");
+                }
+        }
+        catch(Exception $e){
+            return ApiResponse::error("Error updating",400,$e->getMessage());
+        }
     }
 
     /**
@@ -216,14 +217,14 @@ class UserController extends Controller
      *      summary="Delete one user",
      *      description="Delete the user",
      *       @OA\Parameter(
- *          name="user_id",
- *          in="path",
- *          required=true,
- *          @OA\Schema(
- *              type="string"
- *          ),
- *          description="ID of the user to delete"
- *      ),
+     *              name="user_id",
+     *              in="path",
+     *              required=true,
+     *              @OA\Schema(
+     *                  type="string"
+     *              ),
+     *              description="ID of the user to delete"
+     *            ),
      *          @OA\Response(
      *              response=200,
      *              description="successful operation"
@@ -254,6 +255,39 @@ class UserController extends Controller
             catch(Exception $e){
                 return ApiResponse::error("Error Deleting user",500,$e->getMessage());
             }
+        }
+    }
+
+
+    /**
+     * @OA\Get(
+     *      path="/api/profile",
+     *      tags={"Users"},
+     *      summary="Get profile info",
+     *      description="return the current user info",
+     *          @OA\Response(
+     *              response=200,
+     *              description="successful operation"
+     *          ),
+     *          @OA\Response(
+     *              response=404,
+     *              description="aucun résultat trouvé"
+     *          ),
+     *          @OA\Response(
+     *              response=500,
+     *              description="Erreur serveur"
+     *          )
+     *)  
+     */
+    public function profile(Request $request){
+        try
+        {
+            $user = Auth::user();
+            $user["codes"]= $user->codes;
+            return ApiResponse::success($user,"profile info returned");
+        }
+        catch(Exception $e){
+            return ApiResponse::error("Server error",500,$e->getMessage());
         }
     }
 }
