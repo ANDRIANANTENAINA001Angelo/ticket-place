@@ -14,26 +14,34 @@ class CodeController extends Controller
     /**
      * Display a listing of the resource.
      */
-         /**
-     * @OA\Get(
-     *      path="/api/codes",
-     *      tags={"Codes"},
-     *      summary="Get All Info Code",
-     *      description="return list of the all code",
+    /**
+    * @OA\Get(
+    *      path="/api/codes",
+    *      tags={"Codes"},
+    *      summary="Get All Info Code",
+    *      description="return list of the all code",
+    *          @OA\Response(
+    *              response=200,
+    *              description="successful operation"
+    *          ),
+    *          @OA\Response(
+    *              response=404,
+    *              description="aucun résultat trouvé"
+    *          ),
      *          @OA\Response(
-     *              response=200,
-     *              description="successful operation"
+     *              response=403,
+     *              description="action forbiden"
      *          ),
      *          @OA\Response(
-     *              response=404,
-     *              description="aucun résultat trouvé"
+     *              response=401,
+     *              description="action unauthorized"
      *          ),
-     *          @OA\Response(
-     *              response=500,
-     *              description="erreur serveur"
-     *          )
-     *)  
-     */
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
     public function index()
     {
         try{
@@ -95,6 +103,14 @@ class CodeController extends Controller
      *          @OA\Response(
      *              response=400,
      *              description="donné incomplet"
+     *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
      *          ),
      *          @OA\Response(
      *              response=500,
@@ -160,6 +176,14 @@ class CodeController extends Controller
      *          @OA\Response(
      *              response=404,
      *              description="aucun résultat trouvé"
+     *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
      *          ),
      *          @OA\Response(
      *              response=500,
@@ -237,6 +261,14 @@ class CodeController extends Controller
      *              description="donné incomplet"
      *          ),
      *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+     *          @OA\Response(
      *              response=500,
      *              description="erreur serveur"
      *          )
@@ -290,8 +322,12 @@ class CodeController extends Controller
      *              description="successful operation"
      *          ),
      *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
      *              response=403,
-     *              description="action not authorized"
+     *              description="action forbiden"
      *          ),
      *          @OA\Response(
      *              response=500,

@@ -13,14 +13,14 @@
         "version": "1.0.0"
     },
     "servers": [
-      {
-        "url": "https://apid.c4m.mg/app/public/api",
-        "description":"Production Server"
-      },
-      {
-        "url": "http://localhost:8000",
-        "description":"Local Server"
-      }
+        {
+            "url": "https://apid.c4m.mg/ticket-place-app/public",
+            "description": "Production Server"
+        },
+        {
+            "url": "http://localhost:8000",
+            "description": "Local Server"
+        }
     ],
     "paths": {
         "/api/login": {
@@ -153,6 +153,12 @@
                     "404": {
                         "description": "aucun résultat trouvé"
                     },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
                     "500": {
                         "description": "erreur serveur"
                     }
@@ -184,6 +190,12 @@
                     },
                     "404": {
                         "description": "aucun résultat trouvé"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
                     },
                     "500": {
                         "description": "erreur serveur"
@@ -236,6 +248,12 @@
                     "400": {
                         "description": "donné incomplet"
                     },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
                     "500": {
                         "description": "erreur serveur"
                     }
@@ -260,6 +278,440 @@
                 }
             }
         },
+        "/api/events": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Get All Events List",
+                "description": "return list of the all event Event",
+                "operationId": "7058ab7c89d20c752b6afd6d808f6526",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Create new Event",
+                "description": "Create new Event",
+                "operationId": "508895e03d7f10edac84357084c87b20",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "titre": {
+                                        "type": "string",
+                                        "example": "concert"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "plus de detail sur l'event"
+                                    },
+                                    "localisation": {
+                                        "type": "string",
+                                        "example": "Rex Anjoma"
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-08-23"
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "example": [
+                                            "1",
+                                            "3",
+                                            "5",
+                                            "6"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "donné incomplet"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/events/{event_id}": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Get One Event Info",
+                "description": "return info of the Event",
+                "operationId": "f78fefe3df55f27051847d9671fa08f8",
+                "parameters": [
+                    {
+                        "name": "event_id",
+                        "in": "path",
+                        "description": "ID of the Event to show",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Update Event",
+                "description": "Update Event info",
+                "operationId": "3435e2edc46ba77b987ef08fbb857fbd",
+                "parameters": [
+                    {
+                        "name": "event_id",
+                        "in": "path",
+                        "description": "ID of the Event to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "titre": {
+                                        "type": "string",
+                                        "example": "concert"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "plus de detail sur l'event"
+                                    },
+                                    "localisation": {
+                                        "type": "string",
+                                        "example": "Rex Anjoma"
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-08-23"
+                                    },
+                                    "tags": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "example": [
+                                            "1",
+                                            "3",
+                                            "5",
+                                            "6"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "donné incomplet"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Delete event",
+                "description": "Delete event",
+                "operationId": "279659e863edbef6d1082a03a201715a",
+                "parameters": [
+                    {
+                        "name": "event_id",
+                        "in": "path",
+                        "description": "ID of the event to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action not authorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/tags": {
+            "get": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Get All Tags List",
+                "description": "return list of the all event tag",
+                "operationId": "4d0f4baf9e6fa992c0d85fbf140ebf17",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Create new Tag",
+                "description": "Create new Tag",
+                "operationId": "a0a246f29dcb119a2189fd230fc10028",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "label": {
+                                        "type": "string",
+                                        "example": "concert"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "donné incomplet"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/tags/{tag_id}": {
+            "get": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Get One Tag Info",
+                "description": "return info of the tag",
+                "operationId": "17cf4f4a882aae3d887866484660df56",
+                "parameters": [
+                    {
+                        "name": "tag_id",
+                        "in": "path",
+                        "description": "ID of the tag to show",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Update Tag",
+                "description": "Update Tag label",
+                "operationId": "3a64462cc7467aedc95b80bf19a299de",
+                "parameters": [
+                    {
+                        "name": "tag_id",
+                        "in": "path",
+                        "description": "ID of the tag to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "label": {
+                                        "type": "string",
+                                        "example": "bal masqué"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "donné incomplet"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Delete tag",
+                "description": "Delete tag",
+                "operationId": "d24105e20ffcde076b873eaec69e2965",
+                "parameters": [
+                    {
+                        "name": "tag_id",
+                        "in": "path",
+                        "description": "ID of the tag to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action not authorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -271,6 +723,12 @@
                 "responses": {
                     "200": {
                         "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
                     },
                     "404": {
                         "description": "aucun résultat trouvé"
@@ -300,6 +758,12 @@
                 "responses": {
                     "200": {
                         "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
                     },
                     "404": {
                         "description": "aucun user trouvé"
@@ -368,6 +832,12 @@
                     "200": {
                         "description": "successful operation"
                     },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
                     "404": {
                         "description": "aucun user trouvé"
                     },
@@ -398,6 +868,12 @@
                     "200": {
                         "description": "successful operation"
                     },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
                     "404": {
                         "description": "aucun user trouvé"
                     },
@@ -421,6 +897,12 @@
                     },
                     "404": {
                         "description": "aucun résultat trouvé"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
                     },
                     "500": {
                         "description": "Erreur serveur"
@@ -446,6 +928,14 @@
         {
             "name": "Codes",
             "description": "Codes"
+        },
+        {
+            "name": "Events",
+            "description": "Events"
+        },
+        {
+            "name": "Tags",
+            "description": "Tags"
         },
         {
             "name": "Users",

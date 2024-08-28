@@ -19,6 +19,14 @@ use Illuminate\Routing\Controller as BaseController;
  *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
  *      )
  * ),
+ *@OA\Server(
+ *      url="https://apid.c4m.mg/ticket-place-app/public",
+ *      description="Production Server"
+ *), 
+ *@OA\Server(
+ *      url="http://localhost:8000",
+ *      description="Local Server"
+ *),
  * @OA\SecurityScheme(
  *         securityScheme="bearerAuth",
  *         type="http",

@@ -26,6 +26,14 @@ class UserController extends Controller
      *              description="successful operation"
      *          ),
      *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+     *          @OA\Response(
      *              response=404,
      *              description="aucun résultat trouvé"
      *          )
@@ -33,8 +41,13 @@ class UserController extends Controller
      */
     public function index()
     {
+        try{
+            return ApiResponse::success(User::all());
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
         // return response()->json(User::all());
-        return ApiResponse::success(User::all());
     }
 
     /**
@@ -76,6 +89,14 @@ class UserController extends Controller
      *              description="successful operation"
      *          ),
      *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+     *          @OA\Response(
      *              response=404,
      *              description="aucun user trouvé"
      *          ),
@@ -87,12 +108,15 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user= User::find($id);
-        if(!$user){
-            return ApiResponse::error("User nout found",404);
-        }
-        else{
+        try{
+            $user= User::find($id);
+            if(!$user){
+                return ApiResponse::error("User nout found",404);
+            }
             return ApiResponse::success($user);
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
         }
     }
 
@@ -167,6 +191,14 @@ class UserController extends Controller
      *              description="successful operation"
      *          ),
      *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+     *          @OA\Response(
      *              response=404,
      *              description="aucun user trouvé"
      *          ),
@@ -230,6 +262,14 @@ class UserController extends Controller
      *              description="successful operation"
      *          ),
      *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+     *          @OA\Response(
      *              response=404,
      *              description="aucun user trouvé"
      *          ),
@@ -241,20 +281,19 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = User::find($id);
+        try{
+            $user = User::find($id);
 
-        if(!$user){
-            return ApiResponse::error("User not found!",404);
+            if(!$user){
+                return ApiResponse::error("User not found!",404);
+            }
+
+            $user->delete();
+            return ApiResponse::success([],"User deleted");
+            
         }
-        else{
-            try{
-                $user->delete();
-
-                return ApiResponse::success([],"User deleted");
-            }
-            catch(Exception $e){
-                return ApiResponse::error("Error Deleting user",500,$e->getMessage());
-            }
+        catch(Exception $e){
+            return ApiResponse::error("Error Deleting user",500,$e->getMessage());
         }
     }
 
@@ -272,6 +311,14 @@ class UserController extends Controller
      *          @OA\Response(
      *              response=404,
      *              description="aucun résultat trouvé"
+     *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
      *          ),
      *          @OA\Response(
      *              response=500,

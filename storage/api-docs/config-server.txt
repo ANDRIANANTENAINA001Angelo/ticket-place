@@ -1,7 +1,7 @@
 ,
     "servers": [
       {
-        "url": "https://apid.c4m.mg/app/public/api",
+        "url": "https://apid.c4m.mg/ticket-place-app/public",
         "description":"Production Server"
       },
       {
