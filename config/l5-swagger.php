@@ -243,7 +243,8 @@ return [
          * Constants which can be used in annotations
          */
         'constants' => [
-            'L5_SWAGGER_CONST_HOST' => env('SWAGGER_SERVER_URL', "https://apid.c4m.mg/ticket-place-app/public"),
+            'L5_SWAGGER_CONST_SERVER_URL' => env('SWAGGER_SERVER_URL', 'https://apid.c4m.mg/ticket-place-app/public'),
         ],
+        
     ],
 ];
