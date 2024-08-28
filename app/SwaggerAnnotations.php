@@ -9,6 +9,10 @@ namespace App;
  *         title="API Documentation",
  *         description="API documentation with Swagger"
  *     ),
+ *     @OA\Server(
+ *         url=L5_SWAGGER_CONST_SERVER_URL, // L5_SWAGGER_CONST_SERVER_URL sera remplacé par la variable d'environnement
+ *         description="Production Server"
+ *     ),
  *     @OA\Components(
  *         @OA\SecurityScheme(
  *             securityScheme="bearerAuth",
