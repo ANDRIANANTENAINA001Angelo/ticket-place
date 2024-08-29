@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CodeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\IsOrganiserMiddleware;
 use Illuminate\Http\Request;
@@ -26,21 +27,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// ------- email
-Route::post("send-verification-mail",[EmailVerificationNotificationController::class,'store'])->middleware(["auth:sanctum"]);
-Route::get("verify-email/{id}/{hash}",[VerifyEmailController::class,"verify"])->name("verification.verify");
 
-
-Route::post("/forgot-password",[PasswordResetLinkController::class,"store"]);
-Route::post("/reset-password",[NewPasswordController::class,"store"]);
-
-
-Route::get("/email-verified",function(){
-    return ApiResponse::success([],"You're email is now verified");
-})->name("home");
-Route::get("/email-already-verified",function(){
-    return ApiResponse::success([],"You're email is already verified");
-})->name("already-verified");
 
 
 // AUTH
@@ -51,6 +38,19 @@ Route::get("/app/failed-auth",function(){
     return ApiResponse::error("Failed Authentication",401);
 })->name('failed-auth');
 
+// ------- email
+Route::post("send-verification-mail",[EmailVerificationNotificationController::class,'store'])->middleware(["auth:sanctum"]);
+Route::get("verify-email/{id}/{hash}",[VerifyEmailController::class,"verify"])->name("verification.verify");
+
+Route::post("/forgot-password",[PasswordResetLinkController::class,"store"]);
+Route::post("/reset-password",[NewPasswordController::class,"store"]);
+
+Route::get("/email-verified",function(){
+    return ApiResponse::success([],"You're email is now verified");
+})->name("home");
+Route::get("/email-already-verified",function(){
+    return ApiResponse::success([],"You're email is already verified");
+})->name("already-verified");
 
 
 //USERS 
@@ -59,24 +59,31 @@ Route::get("/users/{user}",[UserController::class,"show"]);
 Route::put("/users/{user}",[UserController::class,"update"])->middleware(['auth:sanctum']);
 Route::delete("/users/{user}",[UserController::class,"destroy"])->middleware(['auth:sanctum']);
 Route::get('/profile', [UserController::class,"profile"])->middleware(['auth:sanctum']);
+Route::get("my-notifications",[UserController::class,"notifications"])->middleware(["auth:sanctum"]);
 
 
 // REDUCTION CODE
-Route::post("/codes",[CodeController::class,"store"])->middleware(["auth:sanctum",IsOrganiserMiddleware::class]);
+Route::post("/codes",[CodeController::class,"store"])->middleware(["auth:sanctum"]);
 Route::get("/codes",[CodeController::class,"index"])->middleware(["auth:sanctum"]);
 Route::get("/codes/{code}",[CodeController::class,"show"])->middleware(["auth:sanctum"]);
-Route::put("/codes/{code}",[CodeController::class,"update"])->middleware(["auth:sanctum",IsOrganiserMiddleware::class]);
-Route::delete("/codes/{code}",[CodeController::class,"destroy"])->middleware(["auth:sanctum",IsOrganiserMiddleware::class]);
-Route::post("/generate-code",[CodeController::class,"GenerateRandomUniqueCode"])->middleware(["auth:sanctum",IsOrganiserMiddleware::class]);
+Route::put("/codes/{code}",[CodeController::class,"update"])->middleware(["auth:sanctum"]);
+Route::delete("/codes/{code}",[CodeController::class,"destroy"])->middleware(["auth:sanctum"]);
+Route::post("/generate-code",[CodeController::class,"GenerateRandomUniqueCode"])->middleware(["auth:sanctum"]);
 
 
 //TAGS
-Route::resource("tags",TagController::class)->middleware(["auth:sanctum",IsOrganiserMiddleware::class]);
+Route::resource("tags",TagController::class)->middleware(["auth:sanctum"]);
 
 
 //EVENTS
-Route::resource("events",EventController::class)->middleware(["auth:sanctum",IsOrganiserMiddleware::class])->except(["create","edit"]);
-// Route::get("/search-event?title={title}&localisation={localisation}&start_date={start_date}&end_date={end_date}&tag={tag_name}",[EventController::class,"search"]);
+Route::resource("events",EventController::class)->middleware(["auth:sanctum"])->except(["create","edit"]);
 Route::get("/search-event",[EventController::class,"search"]);
+    
+//Type events (vip, normale)
+Route::post("/events/{id}/add-type-place",[EventController::class,"addTypePlace"])->middleware(["auth:sanctum"]);
+Route::post("/events/{id}/publish",[EventController::class,"publish"])->middleware(["auth:sanctum"]);    
 
+
+//Test 
+Route::get("/create-notification",[TestController::class,"CreateNotification"])->middleware("auth:sanctum");
 

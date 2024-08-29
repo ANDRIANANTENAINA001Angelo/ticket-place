@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\ApiResponse;
 use App\Models\Event;
+use App\Models\TypePlace;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rule;
 
 class EventController extends Controller
 {
@@ -204,6 +206,7 @@ class EventController extends Controller
             }
 
             $event["tags"]= $event->tags;
+            $event["type_places"]= $event->type_places;
             return ApiResponse::success($event);
         }
         catch(Exception $e){
@@ -390,7 +393,7 @@ class EventController extends Controller
     *      path="/api/search-event",
     *      tags={"Events"},
     *      summary="Search or Filter Events",
-    *      description="Search or Filter Events",
+    *      description="Search or Filter Events published and not finished",
     *       @OA\Parameter(
     *         name="title",
     *         in="query",
@@ -462,7 +465,7 @@ class EventController extends Controller
             $tag_name= (string)$request->input("tags_name");
 
             $query = Event::query();
-            $query->where("status","!=","finished");
+            $query->where("status","=","published")->where("status","!=","finished");
     
             if (!empty($title)) {
                 $query->where('titre', 'LIKE', '%' . $title . '%')->orWhere("description","LIKE","%".$title."%");
@@ -500,6 +503,173 @@ class EventController extends Controller
         catch(Exception $e){
             return ApiResponse::error("server error",500,$e->getMessage());
         }
+    }
+
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/events/{event_id}/add-type-place",
+     *     tags={"Events"},
+     *     summary="Ajouter des types de place à un événement",
+     *     description="Permet d'ajouter un ou plusieurs types de place à un événement existant.",
+     *     @OA\Parameter(
+     *         name="event_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         ),
+     *         description="ID de l'événement auquel ajouter des types de place"
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="type_places",
+     *                 type="array",
+     *                 minItems=1,
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="nom",
+     *                         type="string",
+     *                         description="Le nom du type de place"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="nombre",
+     *                         type="integer",
+     *                         description="Le nombre de places pour ce type"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="prix",
+     *                         type="integer",
+     *                         description="Le prix de ce type de place"
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Types de place ajoutés avec succès"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Données invalides"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Événement non trouvé"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+    public function addTypePlace(Request $request,string $id){
+        try{
+            $event = Event::find($id);
+            if(!$event){
+                return ApiResponse::error("Event not found",404);
+            }
+
+
+            $data = $request->validate([
+                'type_places' => 'required|array|min:1',
+                'type_places.*.nom' => 
+                [
+                    'required',
+                    'string',
+                    Rule::unique('type_places', 'nom')->where(function ($query) use ($event) {
+                        return $query->where('event_id', $event->id);
+                    }),
+                ],
+                'type_places.*.nombre' => 'required|integer',
+                'type_places.*.prix' => 'required|integer',
+            ]);
+
+            // create all type_places
+            for($i=0;$i<count($data["type_places"]);$i++){
+                $data["type_places"][$i]["event_id"]= $event->id;
+                if($data["type_places"][$i]["nombre"]!=0){
+                    $data["type_places"][$i]["is_limited"]=true;
+                }
+                TypePlace::create($data["type_places"][$i]);
+            }
+
+            return ApiResponse::success([],"TypePlace added to the event");
+
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+        
+    }
+
+
+    /**
+     * @OA\Post(
+     *      path="/api/events/{event_id}/publish",
+     *      tags={"Events"},
+     *      summary="Publish the event",
+     *      description="Publish the Event, to end creation",
+     *       @OA\Parameter(
+     *              name="event_id",
+     *              in="path",
+     *              required=true,
+     *              @OA\Schema(
+     *                  type="string"
+     *              ),
+     *              description="ID of the Event to show"
+     *            ),
+     *          @OA\Response(
+     *              response=200,
+     *              description="successful operation"
+     *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+     *          @OA\Response(
+     *              response=404,
+     *              description="aucun résultat trouvé"
+     *          ),
+     *          @OA\Response(
+     *              response=500,
+     *              description="erreur serveur"
+     *          )
+     *)  
+     */
+    public function publish(Request $request,string $id){
+        try{
+            $event = Event::find($id);
+            
+            if(!$event){
+                return ApiResponse::error("Event nout found",404);
+            }
+
+            if($event->status=="published"){
+                return ApiResponse::error("Event already published",400);
+            }
+
+            if(count($event->type_places)==0){
+                return ApiResponse::error("Error published",400,"Event Must have type place before publishement");
+            }
+
+            $event->status="published";
+            $event->save();
+            
+            return ApiResponse::success($event,"Event published");
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }        
     }
 
 

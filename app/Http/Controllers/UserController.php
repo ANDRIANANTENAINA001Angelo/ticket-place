@@ -338,4 +338,54 @@ class UserController extends Controller
             return ApiResponse::error("Server error",500,$e->getMessage());
         }
     }
+
+
+    /**
+     * @OA\Get(
+     *      path="/api/my-notifications",
+     *      tags={"Users"},
+     *      summary="Get notifications",
+     *      description="return the user's notifications",
+     *          @OA\Response(
+     *              response=200,
+     *              description="successful operation"
+     *          ),
+     *          @OA\Response(
+     *              response=404,
+     *              description="aucun résultat trouvé"
+     *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=500,
+     *              description="Erreur serveur"
+     *          )
+     *)  
+     */
+    public function notifications(Request $request){
+        /** @user User $user description */
+        try{
+            $user= Auth::user();
+            
+            $notifications = $user->notifications->toArray();
+            
+            if(count($notifications)==0){
+                return ApiResponse::error("No Notification found",404);
+            }
+
+            $notifications = array_map(function ($array){
+                return ["id"=>$array["id"],"data"=> $array["data"]];
+            },$notifications);
+            
+            return ApiResponse::success($notifications,"User notifications ");
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+
+    }
+
+
 }

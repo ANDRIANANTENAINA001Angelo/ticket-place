@@ -748,7 +748,7 @@
                     "Events"
                 ],
                 "summary": "Search or Filter Events",
-                "description": "Search or Filter Events",
+                "description": "Search or Filter Events published and not finished",
                 "operationId": "18d2c475a7c2734e20371af2f187ab9d",
                 "parameters": [
                     {
@@ -802,6 +802,114 @@
                 "responses": {
                     "200": {
                         "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/events/{event_id}/add-type-place": {
+            "post": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Ajouter des types de place à un événement",
+                "description": "Permet d'ajouter un ou plusieurs types de place à un événement existant.",
+                "operationId": "022ea0765ef2c9d2bef79c6984e15d54",
+                "parameters": [
+                    {
+                        "name": "event_id",
+                        "in": "path",
+                        "description": "ID de l'événement auquel ajouter des types de place",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "type_places": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "nom": {
+                                                    "description": "Le nom du type de place",
+                                                    "type": "string"
+                                                },
+                                                "nombre": {
+                                                    "description": "Le nombre de places pour ce type",
+                                                    "type": "integer"
+                                                },
+                                                "prix": {
+                                                    "description": "Le prix de ce type de place",
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "minItems": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Types de place ajoutés avec succès"
+                    },
+                    "400": {
+                        "description": "Données invalides"
+                    },
+                    "404": {
+                        "description": "Événement non trouvé"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/events/{event_id}/publish": {
+            "post": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Publish the event",
+                "description": "Publish the Event, to end creation",
+                "operationId": "130e913c1ff8712ea6ad59b7fb44477d",
+                "parameters": [
+                    {
+                        "name": "event_id",
+                        "in": "path",
+                        "description": "ID of the Event to show",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
                     },
                     "404": {
                         "description": "aucun résultat trouvé"
@@ -1194,6 +1302,30 @@
                     },
                     "403": {
                         "description": "action forbiden"
+                    },
+                    "500": {
+                        "description": "Erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/my-notifications": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get notifications",
+                "description": "return the user's notifications",
+                "operationId": "b179ebcb1cb36e75e1defa6a7c262ce5",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
                     },
                     "500": {
                         "description": "Erreur serveur"

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
 {
@@ -18,6 +19,10 @@ class Event extends Model
         "status"
     ];
 
+    protected $hidden=[
+        // "status"
+    ];
+
     /**
      * The Tags that belong to the Event
      *
@@ -28,5 +33,28 @@ class Event extends Model
         return $this->belongsToMany(Tag::class);
     }
 
+    /**
+     * Get all of the typePlaces for the Event
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function type_places(): HasMany
+    {
+        return $this->hasMany(TypePlace::class);
+    }
+
+    public function isPublished():bool{
+        if($this->status=="published"){
+            return true;
+        }
+        return false;
+    }
+
+    public function isFinished():bool{
+        if($this->status=="finished"){
+            return true;
+        }
+        return false;
+    }
 
 }
