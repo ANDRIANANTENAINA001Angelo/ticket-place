@@ -156,7 +156,8 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      */
-         /**
+    
+     /**
      * @OA\Get(
      *      path="/api/events/{event_id}",
      *      tags={"Events"},
@@ -381,4 +382,127 @@ class EventController extends Controller
             return ApiResponse::error("Error deleting event",500,$e->getMessage());
         }     
     }
+
+
+    // "/search-event?title={title}&localisation={localisation}&start_date={start_date}&end_date={end_date}&tag={tag_name}"
+    /**
+    * @OA\Get(
+    *      path="/api/search-event",
+    *      tags={"Events"},
+    *      summary="Search or Filter Events",
+    *      description="Search or Filter Events",
+    *       @OA\Parameter(
+    *         name="title",
+    *         in="query",
+    *         required=false,
+    *         @OA\Schema(
+    *             type="string"
+    *         ),
+    *         description="Title of the event"
+    *     ),
+    *     @OA\Parameter(
+    *         name="localisation",
+    *         in="query",
+    *         required=false,
+    *         @OA\Schema(
+    *             type="string"
+    *         ),
+    *         description="Location of the event"
+    *     ),
+    *     @OA\Parameter(
+    *         name="start_date",
+    *         in="query",
+    *         required=false,
+    *         @OA\Schema(
+    *             type="string",
+    *             format="date"
+    *         ),
+    *         description="Start date of the event (format: YYYY-MM-DD)"
+    *     ),
+    *     @OA\Parameter(
+    *         name="end_date",
+    *         in="query",
+    *         required=false,
+    *         @OA\Schema(
+    *             type="string",
+    *             format="date"
+    *         ),
+    *         description="End date of the event (format: YYYY-MM-DD)"
+    *     ),
+    *     @OA\Parameter(
+    *         name="tag",
+    *         in="query",
+    *         required=false,
+    *         @OA\Schema(
+    *             type="string"
+    *         ),
+    *         description="Tag associated with the event"
+    *     ),
+    *      @OA\Response(
+    *              response=200,
+    *              description="successful operation",
+    *          ),
+    *          @OA\Response(
+    *              response=404,
+    *              description="aucun résultat trouvé"
+    *          ),
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
+    public function search(Request $request){
+        try{
+
+            $title = (string)$request->input('title');
+            $localisation = (string)$request->input('localisation');
+            $start_date= (string)$request->input("start_date");
+            $end_date= (string)$request->input("end_date");
+            $tag_name= (string)$request->input("tags_name");
+
+            $query = Event::query();
+            $query->where("status","!=","finished");
+    
+            if (!empty($title)) {
+                $query->where('titre', 'LIKE', '%' . $title . '%')->orWhere("description","LIKE","%".$title."%");
+            }
+    
+            if (!empty($localisation)) {
+                $query->where('localisation', 'LIKE', '%' . $localisation . '%');
+            }
+    
+            if(!empty($start_date)){
+                $query->where("date",">",$start_date);
+            }
+    
+            if(!empty($end_date)){
+                $query->where("date","<",$end_date);
+            }
+    
+            if(!empty($tag_name)){
+                $query->whereHas('tags', function($query) use ($tag_name) {
+                    $query->where('label', 'LIKE', '%' . $tag_name . '%');
+                });
+                // $query->with("tags")->where("label","LIKE","%".$tag_name."%");
+            }
+    
+            $query->with("tags");
+            $events = $query->get();
+    
+            if(count($events)==0){
+                return ApiResponse::error("No Event found, for this filter",404);
+            }
+            else{
+                return ApiResponse::success($events);
+            }
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
+
+
+
+
 }

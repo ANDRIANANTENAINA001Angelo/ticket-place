@@ -131,7 +131,8 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-/**
+
+     /**
      * @OA\Put(
      *      path="/api/users/{user_id}",
      *      tags={"Users"},
