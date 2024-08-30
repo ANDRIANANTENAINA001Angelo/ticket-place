@@ -12,13 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('carts', function (Blueprint $table) {
             $table->id();
-            $table->string("titre",150);
-            $table->string("description")->nullable();
-            $table->string("localisation");
-            $table->date("date");
-            $table->string("status")->default("created");// created, published, finished
+            $table->string("status")->default("created");//created, purchased
+            $table->integer("montant")->default(0);
             $table->foreignIdFor(User::class);
             $table->timestamps();
         });
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('events');
+        Schema::dropIfExists('carts');
     }
 };

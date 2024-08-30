@@ -8,6 +8,7 @@ use App\Models\TypePlace;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class EventController extends Controller
@@ -141,10 +142,13 @@ class EventController extends Controller
             $data = $request->validate([
                 "titre"=>["required","string","max:150","min:10"],
                 "description"=>["nullable","string","min:20"],
-                "localisation"=>["required","string","min:10"],
+                "localisation"=>["required","string","min:5"],
                 "date"=>["required","date",'after_or_equal:' . Carbon::now()->addDays(3)->toDateString()],
                 "tags"=>["required","array","exists:tags,id"]
             ]);
+            $user_id= Auth::user()->id;
+
+            $data["user_id"]= $user_id;
             
             $event = Event::create($data);
             $event->tags()->sync($data["tags"]);
@@ -200,7 +204,7 @@ class EventController extends Controller
     {
         try{
             $event = Event::find($id);
-            
+
             if(!$event){
                 return ApiResponse::error("Event nout found",404);
             }
@@ -310,6 +314,11 @@ class EventController extends Controller
                 return ApiResponse::error("Event nout found",404);
             }
 
+            $user_id= Auth::user()->id;
+            if($user_id!= $Event->user_id){
+                return ApiResponse::error("You can't update other's event",403);
+            }
+
             $data = $request->validate([
                 "titre"=>["nullable","string","max:150","min:10"],
                 "description"=>["nullable","string","min:20"],
@@ -376,6 +385,11 @@ class EventController extends Controller
             $event = Event::find($id);
             if(!$event){
                 return ApiResponse::error("event nout found",404);
+            }
+            
+            $user_id= Auth::user()->id;
+            if($user_id!= $event->user_id){
+                return ApiResponse::error("You can't delete other's event",403);
             }
 
             $event->delete();
@@ -575,6 +589,10 @@ class EventController extends Controller
                 return ApiResponse::error("Event not found",404);
             }
 
+            $user_id= Auth::user()->id;
+            if($user_id!= $event->user_id){
+                return ApiResponse::error("You can't update other's event info",403);
+            }
 
             $data = $request->validate([
                 'type_places' => 'required|array|min:1',
@@ -590,16 +608,18 @@ class EventController extends Controller
                 'type_places.*.prix' => 'required|integer',
             ]);
 
+            $type_places= [];
             // create all type_places
             for($i=0;$i<count($data["type_places"]);$i++){
                 $data["type_places"][$i]["event_id"]= $event->id;
                 if($data["type_places"][$i]["nombre"]!=0){
                     $data["type_places"][$i]["is_limited"]=true;
                 }
-                TypePlace::create($data["type_places"][$i]);
+                $typePlace= TypePlace::create($data["type_places"][$i]);
+                array_push($type_places,$typePlace);
             }
 
-            return ApiResponse::success([],"TypePlace added to the event");
+            return ApiResponse::success($type_places,"TypePlace added to the event");
 
         }
         catch(Exception $e){
@@ -653,13 +673,18 @@ class EventController extends Controller
             if(!$event){
                 return ApiResponse::error("Event nout found",404);
             }
+            
+            $user_id= Auth::user()->id;
+            if($user_id!= $event->user_id){
+                return ApiResponse::error("You can't publish other's event",403);
+            }
 
             if($event->status=="published"){
                 return ApiResponse::error("Event already published",400);
             }
 
             if(count($event->type_places)==0){
-                return ApiResponse::error("Error published",400,"Event Must have type place before publishement");
+                return ApiResponse::error("Error published",400,"Event Must have at least one type place before publishement");
             }
 
             $event->status="published";

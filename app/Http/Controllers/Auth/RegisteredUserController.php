@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use App\Models\User;
+use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -74,26 +76,39 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'fname' => ['required', 'string', 'max:255'],
-            'lname' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'max:255','min:4'],
-            'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
-            'type' => ['nullable','string',Rule::in("customer, organiser, administrator")],
-        ]);
+        try{
+            $request->validate([
+                'fname' => ['required', 'string', 'max:255'],
+                'lname' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'password' => ['required', 'max:255','min:4'],
+                'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
+                'type' => ['nullable','string',Rule::in(["customer", "organiser", "administrator"])],
+            ]);
+            
+            $user = User::create([
+                'fname' => $request->fname,
+                'lname' => $request->lname,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => Hash::make($request->password),
+                'type'=> $request->type
+            ]);
+    
+            // create user's cart (first)
+            if($request->type =="customer"){
+                $cart = Cart::create([
+                    "status"=>"created",
+                    "montant"=>0,
+                    "user_id"=>$user->id
+                ]);
+            }
 
-        $user = User::create([
-            'fname' => $request->fname,
-            'lname' => $request->lname,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'password' => Hash::make($request->password),
-        ]);
-
-        return ApiResponse::success([
-            $user
-        ],"User registered");
+            return ApiResponse::success($user,"User registered");
+        }
+        catch(Exception $e){
+            return ApiResponse::error("Server error",500,$e->getMessage());
+        }
         // event(new Registered($user));
 
         // $token= $user->createToken("token");

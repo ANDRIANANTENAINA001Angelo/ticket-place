@@ -1111,6 +1111,151 @@
                 }
             }
         },
+        "/api/event-type-place": {
+            "get": {
+                "tags": [
+                    "TypePlaces"
+                ],
+                "summary": "Get All Type place of events",
+                "description": "return list of the all Type place of events",
+                "operationId": "c7d7bba829a0ab513ac5e97d0ecb60ea",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/event-type-place/{type_place_id}": {
+            "get": {
+                "tags": [
+                    "TypePlaces"
+                ],
+                "summary": "Show the type place ",
+                "description": "Show type place and his event",
+                "operationId": "8ec9ac599efadaefb0224ff9e624dcb6",
+                "parameters": [
+                    {
+                        "name": "type_place_id",
+                        "in": "path",
+                        "description": "ID du types de place",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "opération succès"
+                    },
+                    "404": {
+                        "description": "Type Place non trouvé"
+                    },
+                    "500": {
+                        "description": "server error"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "TypePlaces"
+                ],
+                "summary": "Update type place ",
+                "description": "Update type place info of a event",
+                "operationId": "08893c5c18a192fe61135a9cebfc115b",
+                "parameters": [
+                    {
+                        "name": "type_event_id",
+                        "in": "path",
+                        "description": "ID du types de place",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nom": {
+                                        "description": "Le nom du type de place",
+                                        "type": "string"
+                                    },
+                                    "nombre": {
+                                        "description": "Le nombre de places pour ce type",
+                                        "type": "integer"
+                                    },
+                                    "prix": {
+                                        "description": "Le prix de ce type de place",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Types de place ajoutés avec succès"
+                    },
+                    "400": {
+                        "description": "Données invalides"
+                    },
+                    "404": {
+                        "description": "Événement non trouvé"
+                    }
+                }
+            }
+        },
+        "/api/event-type-place/{type_event_id}": {
+            "delete": {
+                "tags": [
+                    "TypePlaces"
+                ],
+                "summary": "Delete type place event",
+                "description": "Delete type place event",
+                "operationId": "ff5d324fe65349731aa49d8c1bd7f790",
+                "parameters": [
+                    {
+                        "name": "type_event_id",
+                        "in": "path",
+                        "description": "ID of the event to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action not authorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -1359,6 +1504,10 @@
         {
             "name": "Tags",
             "description": "Tags"
+        },
+        {
+            "name": "TypePlaces",
+            "description": "TypePlaces"
         },
         {
             "name": "Users",
