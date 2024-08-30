@@ -56,6 +56,11 @@ class RegisteredUserController extends Controller
     *                      type="string",
     *                      format="password",
     *                      example="password123"
+    *                  ),
+    *                  @OA\Property(
+    *                      property="type",
+    *                      type="string",
+    *                      example="customer"
     *                  )
     *              )
     *          )
@@ -109,13 +114,6 @@ class RegisteredUserController extends Controller
         catch(Exception $e){
             return ApiResponse::error("Server error",500,$e->getMessage());
         }
-        // event(new Registered($user));
-
-        // $token= $user->createToken("token");
-        // $token= $token->plainTextToken;
-
-        // Auth::login($user);
-
-        // return response()->noContent();
+        
     }
 }
