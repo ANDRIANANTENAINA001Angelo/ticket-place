@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000')],
+    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:3000'),'http://localhost:3000','http://localhost:5000','http://localhost:8000',"https://apid.c4m.mg"],
 
     'allowed_origins_patterns' => [],
 
