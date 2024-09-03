@@ -10,6 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
+use App\FileManip;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
@@ -110,7 +114,14 @@ class EventController extends Controller
     *                           example="1"
     *                           ),
     *                      example={"1", "3", "5", "6"}
-    *                   )
+    *                   ),
+    *                  @OA\Property(
+    *                      property="image",
+    *                      type="string",
+    *                      format="binary",
+    *                      nullable=true,
+    *                      description="Image associée à l'événement"
+    *                  )
     *              )
     *          )
     *      ),
@@ -144,12 +155,17 @@ class EventController extends Controller
                 "description"=>["nullable","string","min:20"],
                 "localisation"=>["required","string","min:5"],
                 "date"=>["required","date",'after_or_equal:' . Carbon::now()->addDays(3)->toDateString()],
-                "tags"=>["required","array","exists:tags,id"]
+                "tags"=>["required","array","exists:tags,id"],
+                "image"=>["nullable","file","max:10240"]
             ]);
             $user_id= Auth::user()->id;
 
             $data["user_id"]= $user_id;
             
+            if($request->hasFile("image")){
+                $data["image"]= $this->saveImage($request);
+            }
+
             $event = Event::create($data);
             $event->tags()->sync($data["tags"]);
             return ApiResponse::success($event,"Event created");
@@ -232,7 +248,7 @@ class EventController extends Controller
      */
 
     /**
-    * @OA\Put(
+    * @OA\Post(
     *      path="/api/events/{event_id}",
     *      tags={"Events"},
     *      summary="Update Event",
@@ -280,7 +296,14 @@ class EventController extends Controller
     *                           example="1"
     *                           ),
     *                      example={"1", "3", "5", "6"}
-    *                   )
+    *                   ),
+    *                  @OA\Property(
+    *                      property="image",
+    *                      type="string",
+    *                      format="binary",
+    *                      nullable=true,
+    *                      description="Image associée à l'événement"
+    *                  )
     *              )
     *          )
     *      ),
@@ -309,6 +332,10 @@ class EventController extends Controller
     public function update(Request $request, string $id)
     {
         try{
+            // Log::info($request->all());
+            // Log::info('Request method: ' . $request->getMethod());
+            // Log::info('Request content type: ' . $request->header('Content-Type'));
+            // Log::info('Request body: ' . $request->getContent());
             $Event = Event::find($id);
             if(!$Event){
                 return ApiResponse::error("Event nout found",404);
@@ -324,16 +351,33 @@ class EventController extends Controller
                 "description"=>["nullable","string","min:20"],
                 "localisation"=>["nullable","string","min:10"],
                 "date"=>["nullable","date",'after_or_equal:' . Carbon::now()->addDays(3)->toDateString()],
-                "tags"=>["nullable","array","exists:tags,id"]
+                "tags"=>["nullable","array","exists:tags,id"],
+                "image"=>["nullable","file","max:10240"]
+            
             ]);
+            
+
+            // dd($request->hasFile("image"));
+            if($request->hasFile("image")){
+                $file = $request->file('image');
+                // dd($file->getClientOriginalName(), $file->getSize(), $file->getMimeType());
+                $oldImagePath= $Event->image;
+                $data["image"]= $this->saveImage($request);
+
+                if($oldImagePath!=null){
+                    $this->deleteOldImage($oldImagePath);
+                }
+            }
 
             if(count($data)==0){
                 return ApiResponse::error("Aucun donné validé pour l'update",400);
             }
-            
+
             
             $Event->update($data);
-            $Event->tags()->sync($data["tags"]);
+            if(isset($data["tags"])){
+                $Event->tags()->sync($data["tags"]);
+            }
             $Event->save();
             return ApiResponse::success($Event,"Event updated");
         }
@@ -697,6 +741,26 @@ class EventController extends Controller
         }        
     }
 
+    private function saveImage(Request $request){
+        try{
+            $image = $request->file("image");
+            $file_name = Str::uuid() . time() . "." . $image->getClientOriginalExtension();
+            $image_path = $image->storeAs("/event/image", $file_name, "public");
+            return $image_path;
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",$e->getMessage());
+        }
+    }
+
+    private function deleteOldImage(string $imagePath){
+        try{
+            Storage::delete(FileManip::UrlToPath($imagePath));
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
 
 
 

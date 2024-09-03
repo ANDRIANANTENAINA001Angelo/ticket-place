@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\FileManip;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Event extends Model
 {
@@ -18,7 +20,8 @@ class Event extends Model
         "localisation",
         "date",
         "status",
-        "user_id"
+        "user_id",
+        "image"
     ];
 
     protected $hidden=[
@@ -67,6 +70,13 @@ class Event extends Model
             return true;
         }
         return false;
+    }
+
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? FileManip::PathToUrl($value) : null,
+        );
     }
 
 }

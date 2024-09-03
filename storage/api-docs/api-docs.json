@@ -571,6 +571,12 @@
                                             "5",
                                             "6"
                                         ]
+                                    },
+                                    "image": {
+                                        "description": "Image associée à l'événement",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -687,6 +693,12 @@
                                             "5",
                                             "6"
                                         ]
+                                    },
+                                    "image": {
+                                        "description": "Image associée à l'événement",
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
