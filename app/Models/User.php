@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\ApiResponse;
+use Exception;
 use Illuminate\Auth\MustVerifyEmail as AuthMustVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -34,6 +38,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
+        
         'password',
         'remember_token',
     ];
@@ -46,6 +51,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
 
 
     /**
@@ -69,6 +75,21 @@ class User extends Authenticatable
     }
 
 
+    // public function getCart(){
+    //     return $this->carts->sortBy("created_at")->last()->toArray();
+    // }
+    public function getCart()
+    {
+        // Obtenez le dernier panier avec ses items
+        $cart=  $this->carts()
+                    ->with('items') // Charger les items associés
+                    ->orderBy('created_at', 'desc')// Trier par date de création décroissante
+                    ->first(); // Récupérer le dernier panier
+
+        // $cart["items"]= $cart->items;
+        return $cart ;
+        // return $cart ? $cart->toArray() : null;
+    }
 
 
 

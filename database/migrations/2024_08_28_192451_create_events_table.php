@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string("description")->nullable();
             $table->string("localisation");
             $table->date("date");
+            $table->string("image")->nullable();
             $table->string("status")->default("created");// created, published, finished
             $table->foreignIdFor(User::class);
             $table->timestamps();

@@ -97,48 +97,16 @@ Route::delete("/event-type-place/{id}",[TypePlaceController::class,"destroy"])->
 //CART
 // Get user cart
 Route::get("/cart",[CartController::class,"getUserCart"])->middleware(["auth:sanctum"]);
-
 // Add items to cart
 Route::post("/cart/add",[CartController::class,"store"])->middleware(["auth:sanctum"]);
-
 // Update items in cart
 Route::put("/cart/update",[CartController::class,"update"])->middleware(["auth:sanctum"]);
-
-// Remove specific item from cart
-Route::delete("/cart/remove/item",[CartController::class,"remove"])->middleware(["auth:sanctum"]);
-
 // Clear all items from cart
 Route::delete("/cart/clear",[CartController::class,"clear"])->middleware(["auth:sanctum"]);
-
+// Remove specific item from cart
+Route::delete("/cart/remove/item",[CartController::class,"removeItem"])->middleware(["auth:sanctum"]);
 // Confirm and pay the cart
 Route::post("/cart/pay",[CartController::class,"pay"])->middleware(["auth:sanctum"]);
-
-
-
-
-// // CART (=last Order not purchased)
-// Route::get("/cart",[])->middleware(["auth:sanctum"]);//get user cart 
-// //add the events to cart, give the event, type place and number
-// Route::post("/add-cart",[])->middleware(["auth:sanctum"]);
-// //add the event to cart, give type place with number
-// Route::post("/event/{id_event}/add-cart",[])->middleware(["auth:sanctum"]);
-// //add the event to cart, give number
-// Route::post("/event/{id_event}/place/{id_type_place}/add-cart",[])->middleware(["auth:sanctum"]);
-// // update number of place in cart
-// Route::put("/event/{id_event}/place/{id_type_place}",[])->middleware(["auth:sanctum"]);
-// // update number of many place in cart (give array of place and number)
-// Route::put("/event/{id_event}/update",[])->middleware(["auth:sanctum"]);
-// // update number of many event's place in cart (give array of events, place and number)
-// Route::put("/event/{id_event}/update",[])->middleware(["auth:sanctum"]);
-// // remove event type place to cart
-// Route::delete("/cart/remove/place/{id_type_place}",[])->middleware(["auth:sanctum"]);
-// // remove event to cart
-// Route::delete("/cart/remove/event/{id_event}",[])->middleware(["auth:sanctum"]);
-// // remove all event to cart
-// Route::delete("/cart/remove/all/event",[])->middleware(["auth:sanctum"]);
-// //Confirm cart (pay cart and create new)
-// Route::post("/pay/cart",[])->middleware(["auth:sanctum"]);
-
 
 
 //Test 

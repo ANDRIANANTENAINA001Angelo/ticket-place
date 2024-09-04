@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -68,7 +69,8 @@ class AuthenticatedSessionController extends Controller
         } else {
             $user= $user->first();
             if(Hash::check($data["password"],$user->password)){
-                $token = $user->createToken("token");
+
+                $token = $user->createToken(Str::random(15));
                 
                 return ApiResponse::success([
                     'token' => $token->plainTextToken,

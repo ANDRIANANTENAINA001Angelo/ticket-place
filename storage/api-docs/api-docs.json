@@ -363,6 +363,237 @@
                 }
             }
         },
+        "/api/cart": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Get The user's cart",
+                "description": "return user's cart",
+                "operationId": "659a9669ea36c97dc1330603eeadc37b",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/cart/add": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Add items to cart",
+                "description": "Add one or many place event to cart.",
+                "operationId": "408de867ef91c8a1c1298be6461a5e3c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "type_place_id": {
+                                                    "description": "ID place à ajouter",
+                                                    "type": "integer",
+                                                    "example": "1"
+                                                },
+                                                "nombre": {
+                                                    "description": "Le nombre de places à ajouter",
+                                                    "type": "integer",
+                                                    "example": "1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "minItems": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Ajoutés au panier avec succès"
+                    },
+                    "400": {
+                        "description": "Données invalides"
+                    },
+                    "404": {
+                        "description": "Événement non trouvé"
+                    }
+                }
+            }
+        },
+        "/api/cart/update": {
+            "put": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Update cart",
+                "description": "Update one or many place event of cart.",
+                "operationId": "e5b1ca74b4593556a933c9443d5fe0f9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "type_place_id": {
+                                                    "description": "ID place à modifier",
+                                                    "type": "integer",
+                                                    "example": "1"
+                                                },
+                                                "nombre": {
+                                                    "description": "Le nombre de places à modifier",
+                                                    "type": "integer",
+                                                    "example": "2"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "minItems": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Modification panier succès"
+                    },
+                    "400": {
+                        "description": "Données invalides"
+                    },
+                    "401": {
+                        "description": "Action non authoriser"
+                    },
+                    "403": {
+                        "description": "Action interdit"
+                    },
+                    "404": {
+                        "description": "Événement non trouvé"
+                    }
+                }
+            }
+        },
+        "/api/cart/clear": {
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Clear The user's cart",
+                "description": "Remove all item of user's cart",
+                "operationId": "c2cf94402630acad1cc6d317ec806693",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/cart/remove/item": {
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Remove Item",
+                "description": "Remove Item in the user's cart.",
+                "operationId": "99c07bf01ac5d6a150c741000a5ae399",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "type_place_id": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "operation succès"
+                    },
+                    "400": {
+                        "description": "Données invalides"
+                    },
+                    "401": {
+                        "description": "Action non authoriser"
+                    },
+                    "403": {
+                        "description": "Action interdit"
+                    },
+                    "404": {
+                        "description": "Type Place non trouvé"
+                    }
+                }
+            }
+        },
+        "/api/cart/pay": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Pay the cart",
+                "description": "Process Cart Payment",
+                "operationId": "acf61b071163a06cbdfe6409d21985a7",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
         "/api/codes": {
             "get": {
                 "tags": [
@@ -640,13 +871,13 @@
                     }
                 }
             },
-            "put": {
+            "post": {
                 "tags": [
                     "Events"
                 ],
                 "summary": "Update Event",
                 "description": "Update Event info",
-                "operationId": "3435e2edc46ba77b987ef08fbb857fbd",
+                "operationId": "27f366cef360d86539d9d6a0bea212a1",
                 "parameters": [
                     {
                         "name": "event_id",
@@ -1508,6 +1739,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "Cart",
+            "description": "Cart"
         },
         {
             "name": "Codes",
