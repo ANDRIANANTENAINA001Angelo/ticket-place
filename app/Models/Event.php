@@ -31,6 +31,7 @@ class Event extends Model
 protected $casts = [
     'date' => 'date', // Par défaut, cast en objet Carbon
     'heure' => 'datetime:H:i' // Convertit en objet Carbon pour l'heure
+    
 ];
 
 // Accessor pour formater la date
@@ -45,6 +46,19 @@ public function getHeureAttribute($value)
     return Carbon::parse($value)->format('H:i'); // "19:00"
 }
     
+// Accessor pour formater created_at
+public function getCreatedAtAttribute($value)
+{
+    return Carbon::parse($value)->diffForHumans(); 
+}
+
+// Accessor pour formater updated_at
+public function getUpdatedAtAttribute($value)
+{
+    return Carbon::parse($value)->diffForHumans(); 
+}
+
+
     protected $hidden=[
         // "status"
     ];

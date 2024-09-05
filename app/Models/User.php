@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -89,6 +90,18 @@ class User extends Authenticatable
         // $cart["items"]= $cart->items;
         return $cart ;
         // return $cart ? $cart->toArray() : null;
+    }
+ 
+    // Accessor pour formater created_at
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans(); 
+    }
+
+    // Accessor pour formater updated_at
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans(); 
     }
 
 
