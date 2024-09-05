@@ -790,6 +790,10 @@
                                         "format": "date",
                                         "example": "2024-08-23"
                                     },
+                                    "heure": {
+                                        "type": "time",
+                                        "example": "19:00"
+                                    },
                                     "tags": {
                                         "type": "array",
                                         "items": {
@@ -911,6 +915,10 @@
                                         "type": "string",
                                         "format": "date",
                                         "example": "2024-08-23"
+                                    },
+                                    "heure": {
+                                        "type": "time",
+                                        "example": "19:00"
                                     },
                                     "tags": {
                                         "type": "array",

@@ -107,6 +107,11 @@ class EventController extends Controller
     *                      example="2024-08-23"
     *                  ),
     *                  @OA\Property(
+    *                      property="heure",
+    *                      type="time",
+    *                      example="19:00"
+    *                  ),
+    *                  @OA\Property(
     *                      property="tags",
     *                      type="array",
     *                      @OA\Items(
@@ -155,6 +160,7 @@ class EventController extends Controller
                 "description"=>["nullable","string","min:20"],
                 "localisation"=>["required","string","min:5"],
                 "date"=>["required","date",'after_or_equal:' . Carbon::now()->addDays(3)->toDateString()],
+                "heure"=>["required","date_format:H:i"],
                 "tags"=>["required","array","exists:tags,id"],
                 "image"=>["nullable","file","max:10240"]
             ]);
@@ -289,6 +295,11 @@ class EventController extends Controller
     *                      example="2024-08-23"
     *                  ),
     *                  @OA\Property(
+    *                      property="heure",
+    *                      type="time",
+    *                      example="19:00"
+    *                  ),
+    *                  @OA\Property(
     *                      property="tags",
     *                      type="array",
     *                      @OA\Items(
@@ -351,6 +362,7 @@ class EventController extends Controller
                 "description"=>["nullable","string","min:20"],
                 "localisation"=>["nullable","string","min:10"],
                 "date"=>["nullable","date",'after_or_equal:' . Carbon::now()->addDays(3)->toDateString()],
+                "heure"=>["nullable","date_format:H:i"],
                 "tags"=>["nullable","array","exists:tags,id"],
                 "image"=>["nullable","file","max:10240"]
             

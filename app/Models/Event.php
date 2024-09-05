@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Carbon\Carbon;
 
 class Event extends Model
 {
@@ -19,15 +20,34 @@ class Event extends Model
         "description",
         "localisation",
         "date",
+        "heure",
         "status",
         "user_id",
         "image"
     ];
 
+    
+// Casts pour gérer les types (conversions automatiques)
+protected $casts = [
+    'date' => 'date', // Par défaut, cast en objet Carbon
+    'heure' => 'datetime:H:i' // Convertit en objet Carbon pour l'heure
+];
+
+// Accessor pour formater la date
+public function getDateAttribute($value)
+{
+    return Carbon::parse($value)->translatedFormat('d F Y'); // "24 Aout 2024"
+}
+
+// Accessor pour formater l'heure
+public function getHeureAttribute($value)
+{
+    return Carbon::parse($value)->format('H:i'); // "19:00"
+}
+    
     protected $hidden=[
         // "status"
     ];
-
     /**
      * Get the user that owns the Event
      *
