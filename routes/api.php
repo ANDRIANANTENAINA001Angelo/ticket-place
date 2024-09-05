@@ -79,8 +79,9 @@ Route::resource("tags",TagController::class)->middleware(["auth:sanctum"]);
 
 
 //EVENTS
-Route::resource("events",EventController::class)->middleware(["auth:sanctum"])->except(["create","edit","update","index"]);
+Route::resource("events",EventController::class)->middleware(["auth:sanctum"])->except(["create","edit","update","index","show"]);
 Route::get("events",[EventController::class,"index"]);
+Route::get("events/{id}",[EventController::class,"show"]);
 Route::post("events/{id}",[EventController::class,"update"])->middleware("auth:sanctum");
 Route::get("/search-event",[EventController::class,"search"]);
 Route::post("/events/{id}/publish",[EventController::class,"publish"])->middleware(["auth:sanctum"]);    
