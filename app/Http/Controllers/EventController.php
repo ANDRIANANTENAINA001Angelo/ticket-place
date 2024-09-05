@@ -51,8 +51,8 @@ class EventController extends Controller
     public function index()
     {
         try{
-            $events = Event::all();
-            // $events = Event::with("tags")->get();
+            // $events = Event::all();
+            $events = Event::with(["tags","type_places"])->get();
             if(count($events)==0){
                 return ApiResponse::error("No event found",404);
             }

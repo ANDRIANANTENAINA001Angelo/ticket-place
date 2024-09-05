@@ -79,7 +79,8 @@ Route::resource("tags",TagController::class)->middleware(["auth:sanctum"]);
 
 
 //EVENTS
-Route::resource("events",EventController::class)->middleware(["auth:sanctum"])->except(["create","edit","update"]);
+Route::resource("events",EventController::class)->middleware(["auth:sanctum"])->except(["create","edit","update","index"]);
+Route::get("events",[EventController::class,"index"]);
 Route::post("events/{id}",[EventController::class,"update"])->middleware("auth:sanctum");
 Route::get("/search-event",[EventController::class,"search"]);
 Route::post("/events/{id}/publish",[EventController::class,"publish"])->middleware(["auth:sanctum"]);    
@@ -88,8 +89,8 @@ Route::post("/events/{id}/publish",[EventController::class,"publish"])->middlewa
 
 //Type events (vip, normale)
 Route::post("/events/{id}/add-type-place",[EventController::class,"addTypePlace"])->middleware(["auth:sanctum"]);
-Route::get("/event-type-place",[TypePlaceController::class,"index"])->middleware(["auth:sanctum"]);
-Route::get("/event-type-place/{id}",[TypePlaceController::class,"show"])->middleware(["auth:sanctum"]);
+Route::get("/event-type-place",[TypePlaceController::class,"index"]);
+Route::get("/event-type-place/{id}",[TypePlaceController::class,"show"]);
 Route::put("/event-type-place/{id}",[TypePlaceController::class,"update"])->middleware(["auth:sanctum"]);
 Route::delete("/event-type-place/{id}",[TypePlaceController::class,"destroy"])->middleware(["auth:sanctum"]);
 
