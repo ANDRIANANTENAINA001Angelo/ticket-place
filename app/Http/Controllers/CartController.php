@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\ApiResponse;
 use App\Models\Cart;
 use App\Models\Item;
+use App\Models\Ticket;
 use App\Models\TypePlace;
 use Exception;
 use Illuminate\Http\Request;
@@ -53,10 +54,15 @@ class CartController extends Controller
     */
     public function getUserCart(Request $request){
         try{
+            
             /** @var User $user description */
             $user = Auth::user();
+            if($user->IsAdministrator()){
+                return ApiResponse::error("Administrator have not Cart",400);
+            }
             // dd($user->carts->sortBy("created_at")->last());
             $cart = $user->getCart();
+            
 
             return ApiResponse::success($cart);
         }
@@ -118,6 +124,12 @@ class CartController extends Controller
     public function store(Request $request)
     {
         try {
+            /** @var User $user description */
+            $user= Auth::user();
+            if($user->IsAdministrator()){
+                return ApiResponse::error("Administrator have not Cart",400);
+            }
+
             $data = $request->validate([
                "items"=>["required","array","min:1"],
                "items.*.type_place_id"=>["required","integer","exists:type_places,id"],
@@ -125,8 +137,6 @@ class CartController extends Controller
             ]);
             // $price = 0;
 
-            /** @var User $user description */
-            $user= Auth::user();
             /** @var Cart $cart description */
             
             $cart = $user->getCart();
@@ -259,17 +269,24 @@ class CartController extends Controller
     public function update(Request $request)
     {
         try {
+            /** @var User $user description */
+            $user= Auth::user();
+
+            if($user->IsAdministrator()){
+                return ApiResponse::error("Administrator have not Cart",400);
+            }
+
             $data = $request->validate([
                "items"=>["required","array","min:1"],
                "items.*.type_place_id"=>["required","integer","exists:type_places,id"],
                "items.*.nombre"=>["required","integer","min:1"] 
             ]);
 
-            /** @var User $user description */
-            $user= Auth::user();
 
             /** @var Cart $cart description */
             $cart = $user->getCart();
+
+            
             
             //clear cart items
             if($cart->clear()){
@@ -286,7 +303,7 @@ class CartController extends Controller
 
                 $cart->updatePrice();
                 
-                return ApiResponse::success($cart,"Items updated successful");
+                return ApiResponse::success($items,"Items updated successful");
             }
             else{
                 return ApiResponse::error("Error updating card",500,"Suppression items failed");
@@ -332,8 +349,14 @@ class CartController extends Controller
     */
     public function clear(Request $request){
         try{
+
             /** @var User $user description */
             $user = Auth::user();
+            
+            if($user->IsAdministrator()){
+                return ApiResponse::error("Administrator have not Cart",400);
+            }
+            
             /** @var Cart $cart description */
             $cart= $user->getCart();
             $cart->clear();
@@ -392,13 +415,19 @@ class CartController extends Controller
      */
     public function removeItem(Request $request){
         try{
+            /** @var User $user description */
+            $user = Auth::user();
+            
+            if($user->IsAdministrator()){
+                return ApiResponse::error("Administrator have not Cart",400);
+            }
+            
+
             $data = $request->validate([
                 "type_place_id"=>["required","integer","exists:type_places,id"]
             ]);
 
             // check if item in cart's item 
-            /** @var User $user description */
-            $user = Auth::user();
             /** @var Cart $cart description */
             $cart= $user->getCart();
             $storedItems= $cart->items;
@@ -451,28 +480,85 @@ class CartController extends Controller
     */
     public function pay(Request $request){
         try{
+            
             /** @var User $user description */
             $user = Auth::user();
+            if($user->IsAdministrator()){
+                return ApiResponse::error("Administrator have not Cart",400);
+            }
+            
             $cart = $user->getCart();
     
             if(count($cart->items)==0){
                 return ApiResponse::error("You must add one or more item to cart before purchased it.",401);
             }
-    
-            $cart->update(["status"=>"purchased"]);
-            $cart->save();
-            
-            // create new empty cart
-            $newCart = Cart::create([
-                "status"=>"created",
-                "montant"=>0,
-                "user_id"=>$user->id
-            ]);
-    
-            return ApiResponse::success([],"Cart Purchased Successful.");
+
+            if($this->validateItemsNumber($cart)){
+                $tickets = $this->generateTicketEachItems($cart,$user->id);
+        
+                $cart->update(["status"=>"purchased"]);
+                $cart->save();
+                
+                // create new empty cart
+                $newCart = Cart::create([
+                    "status"=>"created",
+                    "montant"=>0,
+                    "user_id"=>$user->id
+                ]);
+        
+                return ApiResponse::success(["tickets"=>$tickets],"Cart Purchased Successful.");
+            }
+            else{
+                return ApiResponse::error("Error Purchase",401,"One of your type place event have less number free that you need!");
+            }
         }
         catch(Exception $e){
             return ApiResponse::error("Error Purchase Cart",500,$e->getMessage());
+        }
+
+    }
+
+    private function validateItemsNumber(Cart $cart):bool{
+        try{
+            $items = $cart->items;
+    
+            foreach ($items as $item) {
+                if($item->nombre > $item->type_place->nombre_place_disponible){
+                    return false;
+                }
+            }
+    
+            return true;
+
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
+
+
+    private function generateTicketEachItems(Cart $cart,string $customer_id){
+        try{
+            $items = $cart->items;
+    
+            $tickets=[];
+            foreach ($items as $item) {
+                for($i=0;$i < $item->nombre;$i++){
+                    $reference = $item->type_place->generateReference();
+                    $ticket = Ticket::create([
+                        "user_id"=>$customer_id,
+                        "type_place_id"=>$item->type_place->id,
+                        "reference"=>$reference
+                    ]);
+                    array_push($tickets,$ticket);
+                }
+            }
+    
+            return $tickets;
+        }
+        
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
         }
 
     }

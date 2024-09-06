@@ -101,13 +101,13 @@ class RegisteredUserController extends Controller
             ]);
     
             // create user's cart (first)
-            // if($request->type =="customer"){
-            // }
+            if($request->type !="administrator"){
                 $cart = Cart::create([
                     "status"=>"created",
                     "montant"=>0,
                     "user_id"=>$user->id
                 ]);
+            }
 
             return ApiResponse::success($user,"User registered");
         }

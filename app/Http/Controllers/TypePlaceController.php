@@ -302,7 +302,7 @@ class TypePlaceController extends Controller
         catch(Exception $e){
             return ApiResponse::error("server error",500,$e->getMessage());
         }
-
-
     }
+
+    
 }

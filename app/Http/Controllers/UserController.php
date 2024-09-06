@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ApiResponse;
+use App\Models\Event;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -214,6 +215,18 @@ class UserController extends Controller
     {
         
         try{
+            $user = User::find($id);
+
+            if(!$user){
+                return ApiResponse::error("User not found",404);
+            }
+
+            /** @var User $actor_user description */
+            $actor_user = Auth::user();
+            if(!$actor_user->IsAdministrator() && $actor_user->id != $id ){
+                return ApiResponse::error("Erro Updating",403,"Only Administrator can update info of other user");
+            }
+
             $data =  $request->validate([
                 'fname' => ['nullable', 'string', 'max:255'],
                 'lname' => ['nullable', 'string', 'max:255'],
@@ -222,17 +235,12 @@ class UserController extends Controller
                 'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
                 'type' => ['nullable','string',Rule::in("customer", "organiser", "administrator")],
             ]);
-            $user = User::find($id);
+            
+            $user->update($data);
+            $user->save();
 
-            if(!$user){
-                return ApiResponse::error("User not found",404);
-            }
-            else{
-                    $user->update($data);
-                    $user->save();
-
-                    return ApiResponse::success($user,"User updated!");
-                }
+            return ApiResponse::success($user,"User updated!");
+                
         }
         catch(Exception $e){
             return ApiResponse::error("Error updating",400,$e->getMessage());
@@ -283,10 +291,17 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         try{
+
             $user = User::find($id);
 
             if(!$user){
                 return ApiResponse::error("User not found!",404);
+            }
+
+            /** @var User $actor_user description */
+            $actor_user = Auth::user();
+            if(!$actor_user->IsAdministrator() && $actor_user->id != $id ){
+                return ApiResponse::error("Error Updating",403,"Only Administrator can delete other user account");
             }
 
             $user->delete();
@@ -330,8 +345,19 @@ class UserController extends Controller
     public function profile(Request $request){
         try
         {
+            /** @var User $user description */
             $user = Auth::user();
-            $user["codes"]= $user->codes;
+            if($user->IsOrganiser()){
+                $user["codes"]= $user->codes;
+                $user["events"]= Event::where("user_id","=",$user->id)->get();
+            }
+
+            if(!$user->IsAdministrator()){
+                $user["tickets"]=$user->tickets;
+                $user["cart"]=$user->getCart();
+
+            }
+
             return ApiResponse::success($user,"profile info returned");
         }
         catch(Exception $e){

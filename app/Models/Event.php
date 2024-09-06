@@ -92,7 +92,7 @@ public function getUpdatedAtAttribute($value)
         return $this->hasMany(TypePlace::class);
     }
 
-    public function isPublished():bool{
+    public function IsPublished():bool{
         if($this->status=="published"){
             return true;
         }

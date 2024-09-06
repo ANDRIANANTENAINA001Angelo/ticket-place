@@ -20,8 +20,21 @@ class Code extends Model
 
     protected $hidden=[
         "created_at",
-        "updated_at"
+        "updated_at",
+        "user_id"      
     ];
+
+    protected $appends = ["is_expire"];
+
+
+    public function getIsExpireAttribute():bool
+    {
+        // dd($this->expire_at > Carbon::now()->toDateString());
+        if($this->expire_at < Carbon::now()->toDateString()){
+            return true;
+        }
+        return false;
+    }
 
     // Accessor pour formater created_at
     public function getCreatedAtAttribute($value)

@@ -7,6 +7,8 @@ use App\Models\Code;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class CodeController extends Controller
@@ -66,58 +68,7 @@ class CodeController extends Controller
     }
 
 
-    /**
-     * @OA\Post(
-     *      path="/api/codes",
-     *      tags={"Codes"},
-     *      summary="Create new code",
-     *      description="Create new reduction code",
-     *      @OA\RequestBody(
-    *          required=true,
-    *          @OA\MediaType(
-    *              mediaType="application/json",
-    *              @OA\Schema(
-    *                  type="object",
-    *                  @OA\Property(
-    *                      property="code",
-    *                      type="string",
-    *                      example="qskj34qsd"
-    *                  ),
-    *                  @OA\Property(
-    *                      property="price",
-    *                      type="integer",
-    *                      example="1000"
-    *                  ),
-    *                  @OA\Property(
-    *                      property="expire_at",
-    *                      type="date",
-    *                      example="2024-04-30"
-    *                  )
-    *              )
-    *          )
-    *      ),
-     *          @OA\Response(
-     *              response=200,
-     *              description="successful operation"
-     *          ),
-     *          @OA\Response(
-     *              response=400,
-     *              description="donné incomplet"
-     *          ),
-     *          @OA\Response(
-     *              response=401,
-     *              description="action unauthorized"
-     *          ),
-     *          @OA\Response(
-     *              response=403,
-     *              description="action forbiden"
-     *          ),
-     *          @OA\Response(
-     *              response=500,
-     *              description="erreur serveur"
-     *          )
-     *)  
-     */
+
     /**
      * Store a newly created resource in storage.
      */
@@ -282,10 +233,16 @@ class CodeController extends Controller
             if(!$code){
                 return ApiResponse::error("Code Not found",404);
             }
+
+            /** @var User $actor_user description */
+            $actor_user = Auth::user();
+            if($actor_user->id != $code->user_id){
+                return ApiResponse::error("Error Permission",401,"You can't update other's code promo");
+            }
     
             $data = $request->validate([
-                "price"=>["required","integer","min:0"],
-                "expire_at"=>["nullable","date"],
+                "price"=>["nullable","integer","min:0"],
+                "expire_at"=>["nullable","date",'after_or_equal:' . Carbon::now()->addDays(7)->toDateString()],
             ]);
     
             if(count($data)==0){
@@ -372,7 +329,7 @@ class CodeController extends Controller
      *          )
      *)  
      */
-    public function GenerateRandomUniqueCode():string{
+    public function GenerateRandomUniqueCode($api_response=true):string{
         $codes = Code::pluck("code","id")->toArray();
         
         $new_code = Str::random($length=10);
@@ -384,7 +341,106 @@ class CodeController extends Controller
                 // $new_code = Str::uuid();
             }
         }
-        return ApiResponse::success(["code"=>$new_code],"code generated");
+
+        if(!$api_response){
+            return $new_code;
+        }
+        else{
+            return ApiResponse::success(["code"=>$new_code],"code promo generated");
+        }
     }
+
+
+    /**
+     * @OA\Post(
+     *      path="/api/codes",
+     *      tags={"Codes"},
+     *      summary="Create new code",
+     *      description="Create new reduction code",
+     *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\MediaType(
+    *              mediaType="application/json",
+    *              @OA\Schema(
+    *                  type="object",
+    *                  @OA\Property(
+    *                      property="code",
+    *                      type="string",
+    *                      example="qskj34qsd"
+    *                  ),
+    *                  @OA\Property(
+    *                      property="price",
+    *                      type="integer",
+    *                      example="1000"
+    *                  ),
+    *                  @OA\Property(
+    *                      property="expire_at",
+    *                      type="date",
+    *                      example="2024-04-30"
+    *                  )
+    *              )
+    *          )
+    *      ),
+     *          @OA\Response(
+     *              response=200,
+     *              description="successful operation"
+     *          ),
+     *          @OA\Response(
+     *              response=400,
+     *              description="donné incomplet"
+     *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+     *          @OA\Response(
+     *              response=500,
+     *              description="erreur serveur"
+     *          )
+     *)  
+     */
+    public function CreateCode(Request $request){
+        try{
+            /** @var User $user description */
+            $user =Auth::user();
+            
+            if(!$user->IsOrganiser()){
+                return ApiResponse::error("Only Organiser can create code promo",403);
+            }
+            
+            $data = $request->validate([
+                "code"=>["nullable","string","min:5"],
+                "price"=>["required","integer","min:100"],
+                "expire_at"=>["required","date",'after_or_equal:' . Carbon::now()->addDays(7)->toDateString()]
+            ]);
+
+            if(count($data)==0){
+                return ApiResponse::error("Error creating",400,"Aucun donnée valide reçue");
+            }
+
+
+            $data["user_id"] = $user->id;
+   
+            if(!isset($data["code"])){
+                $data["code"]=$this->GenerateRandomUniqueCode(false);
+            }
+    
+            $code = Code::create($data);
+    
+            return ApiResponse::success($code,"You code promo is created");
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
+
+
+
+
+
 
 }

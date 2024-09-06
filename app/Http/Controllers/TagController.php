@@ -6,6 +6,7 @@ use App\ApiResponse;
 use App\Models\Tag;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TagController extends Controller
 {
@@ -246,6 +247,12 @@ class TagController extends Controller
     public function update(Request $request, string $id)
     {
         try{
+            /** @var User $actor_user description */
+            $actor_user = Auth::user();
+            if(!$actor_user->IsAdministrator()){
+                return ApiResponse::error("Error Permission",401,"Only administrator can update Tag");
+            }
+
             $tag = Tag::find($id);
             if(!$tag){
                 return ApiResponse::error("Tag nout found",404);
@@ -304,6 +311,12 @@ class TagController extends Controller
     public function destroy(string $id)
     {
         try{
+            /** @var User $actor_user description */
+            $actor_user = Auth::user();
+            if(!$actor_user->IsAdministrator()){
+                return ApiResponse::error("Error Permission",403,"Only administrator can delete Tag");
+            }
+
             $tag = Tag::find($id);
             if(!$tag){
                 return ApiResponse::error("Tag nout found",404);

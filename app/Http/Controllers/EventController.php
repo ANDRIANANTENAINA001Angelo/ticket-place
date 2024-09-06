@@ -352,8 +352,9 @@ class EventController extends Controller
                 return ApiResponse::error("Event nout found",404);
             }
 
-            $user_id= Auth::user()->id;
-            if($user_id!= $Event->user_id){
+            /** @var User $actor_user description */
+            $actor_user= Auth::user();
+            if($actor_user->id != $Event->user_id && !$actor_user->IsAdministrator()){
                 return ApiResponse::error("You can't update other's event",403);
             }
 
@@ -442,11 +443,13 @@ class EventController extends Controller
             if(!$event){
                 return ApiResponse::error("event nout found",404);
             }
-            
-            $user_id= Auth::user()->id;
-            if($user_id!= $event->user_id){
+
+            /** @var User $actor_user description */
+            $actor_user= Auth::user();
+            if($actor_user->id != $event->user_id && !$actor_user->IsAdministrator()){
                 return ApiResponse::error("You can't delete other's event",403);
             }
+
 
             $event->delete();
             return ApiResponse::success([],"event deleted");
@@ -729,11 +732,13 @@ class EventController extends Controller
             if(!$event){
                 return ApiResponse::error("Event nout found",404);
             }
-            
-            $user_id= Auth::user()->id;
-            if($user_id!= $event->user_id){
+
+            /** @var User $actor_user description */
+            $actor_user= Auth::user();
+            if($actor_user->id != $event->user_id && !$actor_user->IsAdministrator()){
                 return ApiResponse::error("You can't publish other's event",403);
             }
+
 
             if($event->status=="published"){
                 return ApiResponse::error("Event already published",400);

@@ -12,6 +12,7 @@ use App\Http\Controllers\CodeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TypePlaceController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\IsOrganiserMiddleware;
@@ -63,14 +64,15 @@ Route::put("/users/{user}",[UserController::class,"update"])->middleware(['auth:
 Route::delete("/users/{user}",[UserController::class,"destroy"])->middleware(['auth:sanctum']);
 Route::get('/profile', [UserController::class,"profile"])->middleware(['auth:sanctum']);
 Route::get("my-notifications",[UserController::class,"notifications"])->middleware(["auth:sanctum"]);
+Route::get("my-tickets",[TicketController::class,"userTickets"])->middleware(["auth:sanctum"]);
 
 
 // REDUCTION CODE
-Route::post("/codes",[CodeController::class,"store"])->middleware(["auth:sanctum"]);
+Route::post("/codes",[CodeController::class,"CreateCode"])->middleware(["auth:sanctum"]);
 Route::get("/codes",[CodeController::class,"index"])->middleware(["auth:sanctum"]);
 Route::get("/codes/{code}",[CodeController::class,"show"])->middleware(["auth:sanctum"]);
 Route::put("/codes/{code}",[CodeController::class,"update"])->middleware(["auth:sanctum"]);
-Route::delete("/codes/{code}",[CodeController::class,"destroy"])->middleware(["auth:sanctum"]);
+// Route::delete("/codes/{code}",[CodeController::class,"destroy"])->middleware(["auth:sanctum"]);
 Route::post("/generate-code",[CodeController::class,"GenerateRandomUniqueCode"])->middleware(["auth:sanctum"]);
 
 
@@ -85,7 +87,7 @@ Route::get("events/{id}",[EventController::class,"show"]);
 Route::post("events/{id}",[EventController::class,"update"])->middleware("auth:sanctum");
 Route::get("/search-event",[EventController::class,"search"]);
 Route::post("/events/{id}/publish",[EventController::class,"publish"])->middleware(["auth:sanctum"]);    
-
+Route::get("/events/{id}/tickets",[TicketController::class,"eventTickets"])->middleware(["auth:sanctum"]);
 
 
 //Type events (vip, normale)
@@ -112,5 +114,6 @@ Route::post("/cart/pay",[CartController::class,"pay"])->middleware(["auth:sanctu
 
 
 //Test 
-Route::get("/create-notification",[TestController::class,"CreateNotification"])->middleware("auth:sanctum");
+// Route::get("/create-notification",[TestController::class,"CreateNotification"])->middleware("auth:sanctum");
+Route::get("/test/get-reference/{id}",[TestController::class,"reference"])->middleware("auth:sanctum");
 

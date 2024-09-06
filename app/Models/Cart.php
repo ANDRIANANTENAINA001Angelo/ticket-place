@@ -18,7 +18,8 @@ class Cart extends Model
     protected $fillable= [
         "status",
         "montant",
-        "user_id"
+        "user_id",
+        "code_id"
     ];
 
     protected $hidden=[

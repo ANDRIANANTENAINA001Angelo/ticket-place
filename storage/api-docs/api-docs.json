@@ -619,6 +619,56 @@
                         "description": "erreur serveur"
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Codes"
+                ],
+                "summary": "Create new code",
+                "description": "Create new reduction code",
+                "operationId": "95613390943ee050086dc8c3f77af0b9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "example": "qskj34qsd"
+                                    },
+                                    "price": {
+                                        "type": "integer",
+                                        "example": "1000"
+                                    },
+                                    "expire_at": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2024-04-30"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "donné incomplet"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
             }
         },
         "/api/codes/{code_id}": {
@@ -1366,6 +1416,62 @@
                 }
             }
         },
+        "/api/my-tickets": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user's tickets",
+                "description": "return the list of user's tickets",
+                "operationId": "7cb72bb0c912d3f203b9c01811317ff9",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/events/{event_id}/tickets": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Get Event's Tickets",
+                "description": "return list of Event's tickets",
+                "operationId": "2538e567322eb94714ad69baffae7ee9",
+                "parameters": [
+                    {
+                        "name": "event_id",
+                        "in": "path",
+                        "description": "ID of the Event",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
         "/api/event-type-place": {
             "get": {
                 "tags": [
@@ -1765,12 +1871,12 @@
             "description": "Tags"
         },
         {
-            "name": "TypePlaces",
-            "description": "TypePlaces"
-        },
-        {
             "name": "Users",
             "description": "Users"
+        },
+        {
+            "name": "TypePlaces",
+            "description": "TypePlaces"
         }
     ],
     "security": [

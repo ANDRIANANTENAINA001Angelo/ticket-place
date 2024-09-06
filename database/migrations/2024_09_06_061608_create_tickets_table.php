@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Code;
+use App\Models\TypePlace;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('carts', function (Blueprint $table) {
+        Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            $table->string("status")->default("created");//created, purchased
-            $table->integer("montant")->default(0);
+            $table->string("reference")->unique();
+            $table->foreignIdFor(TypePlace::class);
             $table->foreignIdFor(User::class);
-            $table->foreignIdFor(Code::class)->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('carts');
+        Schema::dropIfExists('tickets');
     }
 };
