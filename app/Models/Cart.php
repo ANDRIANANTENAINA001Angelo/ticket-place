@@ -28,9 +28,19 @@ class Cart extends Model
         "updated_at"
     ];
 
-    
+   
+    protected $appends =["montant_reduite"];
 
-
+    public function getMontantReduiteAttribute(){
+        if(isset($this->code_id)){
+            $code = Code::find($this->code_id);
+            $price = $this->montant - ($this->montant * $code->price);
+            return $price;
+        }
+        else{
+            return $this->montant;
+        }
+    }
 
     /**
      * Get the user that owns the Cart

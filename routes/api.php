@@ -111,7 +111,7 @@ Route::delete("/cart/clear",[CartController::class,"clear"])->middleware(["auth:
 Route::delete("/cart/remove/item",[CartController::class,"removeItem"])->middleware(["auth:sanctum"]);
 // Confirm and pay the cart
 Route::post("/cart/pay",[CartController::class,"pay"])->middleware(["auth:sanctum"]);
-
+Route::post("/cart/evaluation",[CartController::class,"evaluate"])->middleware("auth:sanctum");
 
 //Test 
 // Route::get("/create-notification",[TestController::class,"CreateNotification"])->middleware("auth:sanctum");

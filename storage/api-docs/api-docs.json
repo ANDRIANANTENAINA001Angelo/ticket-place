@@ -575,6 +575,22 @@
                 "summary": "Pay the cart",
                 "description": "Process Cart Payment",
                 "operationId": "acf61b071163a06cbdfe6409d21985a7",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "example": "qskj34qsd"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "successful operation"
@@ -587,6 +603,40 @@
                     },
                     "401": {
                         "description": "action unauthorized"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/cart/evaluation": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Evaluation Cart ",
+                "description": "Evaluation Cart Before Payment with code promo",
+                "operationId": "c03c16a8679ac7a399ede90891bfc364",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "example": "qskj34qsd"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
                     },
                     "500": {
                         "description": "erreur serveur"
@@ -638,8 +688,9 @@
                                         "example": "qskj34qsd"
                                     },
                                     "price": {
-                                        "type": "integer",
-                                        "example": "1000"
+                                        "description": "Pourcentage montant réduction",
+                                        "type": "number",
+                                        "example": "0.01"
                                     },
                                     "expire_at": {
                                         "type": "string",
@@ -671,17 +722,17 @@
                 }
             }
         },
-        "/api/codes/{code_id}": {
+        "/api/codes/{code}": {
             "get": {
                 "tags": [
                     "Codes"
                 ],
                 "summary": "Get One Code Info",
                 "description": "return the info of the code",
-                "operationId": "e467a65b2cfa89fc44af5c9c3da97dc0",
+                "operationId": "71dfe81dc982c321b7743fd5c4aa5b53",
                 "parameters": [
                     {
-                        "name": "code_id",
+                        "name": "code",
                         "in": "path",
                         "description": "ID of the code to show",
                         "required": true,
@@ -714,10 +765,10 @@
                 ],
                 "summary": "Update code",
                 "description": "Update reduction code",
-                "operationId": "4c205b2ab6d92acf6a4bee9d99d50dcf",
+                "operationId": "7fc6d91d9524cff2a8c6395a36852ff2",
                 "parameters": [
                     {
-                        "name": "code_id",
+                        "name": "code",
                         "in": "path",
                         "description": "ID of the code to update",
                         "required": true,
@@ -733,8 +784,9 @@
                             "schema": {
                                 "properties": {
                                     "price": {
-                                        "type": "integer",
-                                        "example": "1000"
+                                        "description": "Pourcentage prix réduction",
+                                        "type": "number",
+                                        "example": "0.01"
                                     },
                                     "expire_at": {
                                         "type": "string",

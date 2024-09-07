@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ApiResponse;
 use App\Models\Cart;
+use App\Models\Code;
 use App\Models\Item;
 use App\Models\Ticket;
 use App\Models\TypePlace;
@@ -456,6 +457,20 @@ class CartController extends Controller
     *      tags={"Cart"},
     *      summary="Pay the cart",
     *      description="Process Cart Payment",
+    *      @OA\RequestBody(
+    *          required=false,
+    *          @OA\MediaType(
+    *              mediaType="application/json",
+    *              @OA\Schema(
+    *                  type="object",
+    *                  @OA\Property(
+    *                      property="code",
+    *                      type="string",
+    *                      example="qskj34qsd"
+    *                  )
+    *              )
+    *          ),
+    *           ),
     *          @OA\Response(
     *              response=200,
     *              description="successful operation"
@@ -476,7 +491,7 @@ class CartController extends Controller
     *              response=500,
     *              description="erreur serveur"
     *          )
-    *)  
+    *   )  
     */
     public function pay(Request $request){
         try{
@@ -487,16 +502,23 @@ class CartController extends Controller
                 return ApiResponse::error("Administrator have not Cart",400);
             }
             
+            
             $cart = $user->getCart();
-    
+            
             if(count($cart->items)==0){
                 return ApiResponse::error("You must add one or more item to cart before purchased it.",401);
             }
-
+            
             if($this->validateItemsNumber($cart)){
+                $dataUpdated["status"]="purchased";
+
+                if(count($request->all())>0){
+                    $reduction = $this->evaluate($request,false);
+                    $dataUpdate["code_id"]= $reduction["code_id"];
+                }
                 $tickets = $this->generateTicketEachItems($cart,$user->id);
-        
-                $cart->update(["status"=>"purchased"]);
+                
+                $cart->update($dataUpdate);
                 $cart->save();
                 
                 // create new empty cart
@@ -564,4 +586,69 @@ class CartController extends Controller
     }
 
 
+
+        
+    /**
+    * @OA\Post(
+    *      path="/api/cart/evaluation",
+    *      tags={"Cart"},
+    *      summary="Evaluation Cart ",
+    *      description="Evaluation Cart Before Payment with code promo",
+    *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\MediaType(
+    *              mediaType="application/json",
+    *              @OA\Schema(
+    *                  type="object",
+    *                  @OA\Property(
+    *                      property="code",
+    *                      type="string",
+    *                      example="qskj34qsd"
+    *                  )
+    *              )
+    *          )
+    *      ),
+    *          @OA\Response(
+    *              response=200,
+    *              description="successful operation"
+    *          ),
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
+    public function evaluate(Request $request,bool $api_response=true){
+        try{
+            
+            $data = $request->validate([
+                "code"=>["required","string","exists:codes,code"]
+            ]);
+    
+            $code = Code::find($data["code"]);
+            /** @var User $user description */
+            $user = Auth::user();
+            /** @var Cart $cart description */
+            $cart= $user->getCart();
+            
+            $res["montant"]=$cart->montant;
+            $res["pourcentage"]=$code->price;
+            $res["code_id"]=$code->id;
+            $res["montant_reduite"]= $cart->montant - ($cart->montant * $code->price);
+    
+            if($api_response){
+                return ApiResponse::success($res,"Evaluation with code");
+            }
+            return $res;
+        }
+        catch(Exception $e){
+            return ApiResponse::error("Error Evaluation",500,$e->getMessage());
+        }
+
+    }
+
+
+
+
 }
+

@@ -78,7 +78,7 @@ class CodeController extends Controller
             
             $data = $request->validate([
                 "code"=>["nullable","string","min:6","max:20","unique:".Code::class],
-                "price"=>["required","integer","min:0"],
+                "price"=>["required","number","min:0.01","max:1"],
                 "expire_at"=>["nullable","date"],
             ]);
 
@@ -93,7 +93,7 @@ class CodeController extends Controller
             }
 
             $code= Code::create($data);            
-            return ApiResponse::success($code,"You code is generated successfull");
+            return ApiResponse::success($code,"Your code is generated successfull");
         }
         catch(Exception $e){
             return ApiResponse::error("Error creating Code",500,$e->getMessage());
@@ -107,12 +107,12 @@ class CodeController extends Controller
 
      /**
      * @OA\Get(
-     *      path="/api/codes/{code_id}",
+     *      path="/api/codes/{code}",
      *      tags={"Codes"},
      *      summary="Get One Code Info",
      *      description="return the info of the code",
      *       @OA\Parameter(
-     *              name="code_id",
+     *              name="code",
      *              in="path",
      *              required=true,
      *              @OA\Schema(
@@ -142,15 +142,15 @@ class CodeController extends Controller
      *          )
      *)  
      */
-    public function show(string $id)
+    public function show(string $code)
     {
         try{
-            $code = Code::find($id);
+            $code = Code::where("code","=",$code)->get();
             if(!$code){
                 return ApiResponse::error("Code not found",404);
             }
             else{
-                return ApiResponse::success($code);
+                return ApiResponse::success($code[0]);
             }
         }
         catch(Exception $e){
@@ -171,12 +171,12 @@ class CodeController extends Controller
      */
     /**
      * @OA\Put(
-     *      path="/api/codes/{code_id}",
+     *      path="/api/codes/{code}",
      *      tags={"Codes"},
      *      summary="Update code",
      *      description="Update reduction code",
      *       @OA\Parameter(
-     *              name="code_id",
+     *              name="code",
      *              in="path",
      *              required=true,
      *              @OA\Schema(
@@ -192,8 +192,9 @@ class CodeController extends Controller
     *                  type="object",
     *                  @OA\Property(
     *                      property="price",
-    *                      type="integer",
-    *                      example="1000"
+    *                      type="number",
+    *                      example="0.01",
+    *                       description="Pourcentage prix réduction"
     *                  ),
     *                  @OA\Property(
     *                      property="expire_at",
@@ -241,7 +242,7 @@ class CodeController extends Controller
             }
     
             $data = $request->validate([
-                "price"=>["nullable","integer","min:0"],
+                "price"=>["nullable","number","min:0.01","max:1"],
                 "expire_at"=>["nullable","date",'after_or_equal:' . Carbon::now()->addDays(7)->toDateString()],
             ]);
     
@@ -370,8 +371,9 @@ class CodeController extends Controller
     *                  ),
     *                  @OA\Property(
     *                      property="price",
-    *                      type="integer",
-    *                      example="1000"
+    *                      type="number",
+    *                      example="0.01",
+    *                      description="Pourcentage montant réduction"
     *                  ),
     *                  @OA\Property(
     *                      property="expire_at",
@@ -408,13 +410,13 @@ class CodeController extends Controller
             /** @var User $user description */
             $user =Auth::user();
             
-            if(!$user->IsOrganiser()){
-                return ApiResponse::error("Only Organiser can create code promo",403);
+            if($user->IsCustomer()){
+                return ApiResponse::error("Customer can't create code promo",403);
             }
             
             $data = $request->validate([
                 "code"=>["nullable","string","min:5"],
-                "price"=>["required","integer","min:100"],
+                "price"=>["required","number","min:0.01","max:1"],
                 "expire_at"=>["required","date",'after_or_equal:' . Carbon::now()->addDays(7)->toDateString()]
             ]);
 
@@ -437,10 +439,5 @@ class CodeController extends Controller
             return ApiResponse::error("server error",500,$e->getMessage());
         }
     }
-
-
-
-
-
 
 }
