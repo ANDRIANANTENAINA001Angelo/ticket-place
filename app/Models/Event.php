@@ -23,6 +23,7 @@ class Event extends Model
         "heure",
         "status",
         "user_id",
+        "tag_id",
         "image"
     ];
 
@@ -77,9 +78,9 @@ public function getUpdatedAtAttribute($value)
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function tags(): BelongsToMany
+    public function tag(): BelongsTo
     {
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsTo(Tag::class);
     }
 
     /**

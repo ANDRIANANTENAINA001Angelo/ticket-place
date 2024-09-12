@@ -86,6 +86,8 @@ Route::get("events",[EventController::class,"index"]);
 Route::get("events/{id}",[EventController::class,"show"]);
 Route::post("events/{id}",[EventController::class,"update"])->middleware("auth:sanctum");
 Route::get("/search-event",[EventController::class,"search"]);
+Route::get("/search-event-price",[EventController::class,"searchPrice"]);
+Route::get("/search-event-text",[EventController::class,"searchText"]);
 Route::post("/events/{id}/publish",[EventController::class,"publish"])->middleware(["auth:sanctum"]);    
 Route::get("/events/{id}/tickets",[TicketController::class,"eventTickets"])->middleware(["auth:sanctum"]);
 

@@ -169,10 +169,17 @@ class TagController extends Controller
     public function show(string $id)
     {
         try{
+            /** @var User $actor_user description */
+            $actor_user = Auth::user();
+            if(!$actor_user->IsAdministrator()){
+                return ApiResponse::error("Error Permission",401,"Only administrator can create Tag");
+            }
+
             $tag = Tag::find($id);
             if(!$tag){
                 return ApiResponse::error("Tag nout found",404);
             }
+            
             $tag["events"]=$tag->events;
             return ApiResponse::success($tag);
         }

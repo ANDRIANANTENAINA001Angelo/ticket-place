@@ -52,7 +52,8 @@ class EventController extends Controller
     {
         try{
             // $events = Event::all();
-            $events = Event::where("status","=","published")->where("status","!=","finished")->with(["tags","type_places"])->get();
+            $events = Event::where("status","=","published")->where("status","!=","finished")->with(["tag","type_places"])->paginate(5);
+            // $events = Event::where("status","=","published")->where("status","!=","finished")->with(["tag","type_places"])->get();
             if(count($events)==0){
                 return ApiResponse::error("No event found",404);
             }
@@ -112,14 +113,11 @@ class EventController extends Controller
     *                      example="19:00"
     *                  ),
     *                  @OA\Property(
-    *                      property="tags",
-    *                      type="array",
-    *                      @OA\Items(
-    *                           type="integer", 
-    *                           example="1"
-    *                           ),
-    *                      example={"1", "3", "5", "6"}
-    *                   ),
+    *                      property="tag_id",
+    *                      type="integer",
+    *                      example="1",
+    *                      description="ID tag"
+    *                      ),
     *                  @OA\Property(
     *                      property="image",
     *                      type="string",
@@ -157,11 +155,11 @@ class EventController extends Controller
         try{
             $data = $request->validate([
                 "titre"=>["required","string","max:150","min:10"],
-                "description"=>["nullable","string","min:20"],
+                "description"=>["required","string","min:20"],
                 "localisation"=>["required","string","min:5"],
                 "date"=>["required","date",'after_or_equal:' . Carbon::now()->addDays(3)->toDateString()],
                 "heure"=>["required","date_format:H:i"],
-                "tags"=>["required","array","exists:tags,id"],
+                "tag_id"=>["required","integer","exists:tags,id"],
                 "image"=>["nullable","file","max:10240"]
             ]);
             $user_id= Auth::user()->id;
@@ -173,7 +171,7 @@ class EventController extends Controller
             }
 
             $event = Event::create($data);
-            $event->tags()->sync($data["tags"]);
+            // $event->tags()->sync($data["tags"]);
             return ApiResponse::success($event,"Event created");
         }
         catch(Exception $e){
@@ -231,7 +229,7 @@ class EventController extends Controller
                 return ApiResponse::error("Event nout found",404);
             }
 
-            $event["tags"]= $event->tags;
+            $event["tag"]= $event->tag;
             $event["type_places"]= $event->type_places;
             return ApiResponse::success($event);
         }
@@ -300,14 +298,11 @@ class EventController extends Controller
     *                      example="19:00"
     *                  ),
     *                  @OA\Property(
-    *                      property="tags",
-    *                      type="array",
-    *                      @OA\Items(
-    *                           type="integer", 
-    *                           example="1"
-    *                           ),
-    *                      example={"1", "3", "5", "6"}
-    *                   ),
+    *                      property="tag_id",
+    *                      type="integer",
+    *                      example="1",
+    *                      description="ID tag"
+    *                      ),
     *                  @OA\Property(
     *                      property="image",
     *                      type="string",
@@ -354,8 +349,8 @@ class EventController extends Controller
 
             /** @var User $actor_user description */
             $actor_user= Auth::user();
-            if($actor_user->id != $Event->user_id && !$actor_user->IsAdministrator()){
-                return ApiResponse::error("You can't update other's event",403);
+            if(!$actor_user->IsAdministrator()){
+                return ApiResponse::error("Only Administrator can update tag",403);
             }
 
             $data = $request->validate([
@@ -364,7 +359,7 @@ class EventController extends Controller
                 "localisation"=>["nullable","string","min:10"],
                 "date"=>["nullable","date",'after_or_equal:' . Carbon::now()->addDays(3)->toDateString()],
                 "heure"=>["nullable","date_format:H:i"],
-                "tags"=>["nullable","array","exists:tags,id"],
+                "tag_id"=>["nullable","integer","exists:tags,id"],
                 "image"=>["nullable","file","max:10240"]
             
             ]);
@@ -388,9 +383,7 @@ class EventController extends Controller
 
             
             $Event->update($data);
-            if(isset($data["tags"])){
-                $Event->tags()->sync($data["tags"]);
-            }
+            
             $Event->save();
             return ApiResponse::success($Event,"Event updated");
         }
@@ -460,7 +453,6 @@ class EventController extends Controller
     }
 
 
-    // "/search-event?title={title}&localisation={localisation}&start_date={start_date}&end_date={end_date}&tag={tag_name}"
     /**
     * @OA\Get(
     *      path="/api/search-event",
@@ -486,6 +478,26 @@ class EventController extends Controller
     *         description="Location of the event"
     *     ),
     *     @OA\Parameter(
+    *         name="min_price",
+    *         in="query",
+    *         required=false,
+    *         @OA\Schema(
+    *             type="integer",
+    *             minimum=0,
+    *             example=1
+    *         ),
+    *         description="Minimum Price"
+    *     ),
+    *     @OA\Parameter(
+    *         name="max_price",
+    *         in="query",
+    *         required=false,
+    *         @OA\Schema(
+    *             type="integer"
+    *         ),
+    *         description="Max Price"
+    *     ),
+    *     @OA\Parameter(
     *         name="start_date",
     *         in="query",
     *         required=false,
@@ -504,15 +516,6 @@ class EventController extends Controller
     *             format="date"
     *         ),
     *         description="End date of the event (format: YYYY-MM-DD)"
-    *     ),
-    *     @OA\Parameter(
-    *         name="tag",
-    *         in="query",
-    *         required=false,
-    *         @OA\Schema(
-    *             type="string"
-    *         ),
-    *         description="Tag associated with the event"
     *     ),
     *      @OA\Response(
     *              response=200,
@@ -535,10 +538,12 @@ class EventController extends Controller
             $localisation = (string)$request->input('localisation');
             $start_date= (string)$request->input("start_date");
             $end_date= (string)$request->input("end_date");
-            $tag_name= (string)$request->input("tags_name");
-
+            $min_price= (int)$request->input("min_price");
+            $max_price= (int)$request->input("max_price");
+           
+            
             $query = Event::query();
-            $query->where("status","=","published")->where("status","!=","finished");
+            $query->with("type_places","tag")->where("status","=","published")->where("status","!=","finished");
     
             if (!empty($title)) {
                 $query->where('titre', 'LIKE', '%' . $title . '%')->orWhere("description","LIKE","%".$title."%");
@@ -555,15 +560,22 @@ class EventController extends Controller
             if(!empty($end_date)){
                 $query->where("date","<",$end_date);
             }
-    
-            if(!empty($tag_name)){
-                $query->whereHas('tags', function($query) use ($tag_name) {
-                    $query->where('label', 'LIKE', '%' . $tag_name . '%');
+
+            if (!empty($min_price) && !empty($max_price)) {
+                $query->whereHas('tag', function ($q) use ($min_price, $max_price) {
+                    $q->whereBetween('prix', [$min_price, $max_price]);
                 });
-                // $query->with("tags")->where("label","LIKE","%".$tag_name."%");
+            } elseif (!empty($min_price)) {
+                $query->whereHas('tag', function ($q) use ($min_price) {
+                    $q->where('prix', '>=', $min_price);
+                });
+            } elseif (!empty($max_price)) {
+                $query->whereHas('tag', function ($q) use ($max_price) {
+                    $q->where('prix', '<=', $max_price);
+                });
             }
     
-            $query->with("tags");
+           
             $events = $query->get();
     
             if(count($events)==0){
@@ -780,5 +792,148 @@ class EventController extends Controller
     }
 
 
+    /**
+    * @OA\Get(
+    *      path="/api/search-event-price",
+    *      tags={"Events"},
+    *      summary="Search Events by price",
+    *      description="Search Events published and not finished by price",
+    *     @OA\Parameter(
+    *         name="min_price",
+    *         in="query",
+    *         required=false,
+    *         @OA\Schema(
+    *             type="integer",
+    *             minimum=0,
+    *             example=1
+    *         ),
+    *         description="Prix Minimum "
+    *     ),
+    *     @OA\Parameter(
+    *         name="max_price",
+    *         in="query",
+    *         required=false,
+    *         @OA\Schema(
+    *             type="integer"
+    *         ),
+    *         description="Max Price"
+    *         ),
+    *      @OA\Response(
+    *              response=200,
+    *              description="successful operation",
+    *          ),
+    *          @OA\Response(
+    *              response=404,
+    *              description="aucun résultat trouvé"
+    *          ),
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
+    public function searchPrice(Request $request){
+        try{
 
+            $min_price= (int)$request->input("min_price");
+            $max_price= (int)$request->input("max_price");
+           
+            
+            $query = Event::query();
+            $query->with("type_places","tag")->where("status","=","published")->where("status","!=","finished");
+    
+            if (!empty($min_price) && !empty($max_price)) {
+                $query->whereHas('type_places', function ($q) use ($min_price, $max_price) {
+                    $q->whereBetween('prix', [$min_price, $max_price]);
+                });
+            } elseif (!empty($min_price)) {
+                $query->whereHas('tag', function ($q) use ($min_price) {
+                    $q->where('type_places', '>=', $min_price);
+                });
+            } elseif (!empty($max_price)) {
+                $query->whereHas('type_places', function ($q) use ($max_price) {
+                    $q->where('prix', '<=', $max_price);
+                });
+            }
+    
+           
+            $events = $query->get();
+    
+            if(count($events)==0){
+                return ApiResponse::error("No Event found, for this filter",404);
+            }
+            else{
+                return ApiResponse::success($events);
+            }
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
+
+
+
+/**
+    * @OA\Get(
+    *      path="/api/search-event-text",
+    *      tags={"Events"},
+    *      summary="Search Events by text",
+    *      description="Search Events published and not finished by text content",
+    *       @OA\Parameter(
+    *         name="text",
+    *         in="query",
+    *         required=true,
+    *         @OA\Schema(
+    *             type="string"
+    *         ),
+    *         description="Text of the event"
+    *     ),
+    *      @OA\Response(
+    *              response=200,
+    *              description="successful operation",
+    *          ),
+    *          @OA\Response(
+    *              response=404,
+    *              description="aucun résultat trouvé"
+    *          ),
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
+    public function searchText(Request $request){
+        try{
+
+            $text = (string)$request->input('text');
+            
+            $query = Event::query();
+            $query->with("type_places","tag")->where("status","=","published")->where("status","!=","finished");
+    
+            if (!empty($text)) {
+                $query->where('titre', 'LIKE', '%' . $text . '%')
+                      ->orWhere("description", "LIKE", "%" . $text . "%")
+                      ->orWhere("localisation", "LIKE", "%" . $text . "%")
+                      ->orWhereHas('tag', function ($q) use ($text) {
+                          $q->where('label', "LIKE", "%" . $text . "%");
+                      });
+            }
+               
+            $events = $query->get();
+    
+            if(count($events)==0){
+                return ApiResponse::error("No Event found, for this filter",404);
+            }
+            else{
+                return ApiResponse::success($events);
+            }
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
+
+
+
+    
 }

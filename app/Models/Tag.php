@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tag extends Model
 {
@@ -15,14 +16,10 @@ class Tag extends Model
         "label"
     ];
 
-    /**
-     * The Event that belong to the Tag
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function events(): BelongsToMany
+
+    public function events(): HasMany
     {
-        return $this->belongsToMany(Event::class);
+        return $this->hasMany(Event::class);
     }
 
     // Accessor pour formater created_at
