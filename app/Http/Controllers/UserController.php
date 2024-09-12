@@ -224,7 +224,7 @@ class UserController extends Controller
             /** @var User $actor_user description */
             $actor_user = Auth::user();
             if(!$actor_user->IsAdministrator() && $actor_user->id != $id ){
-                return ApiResponse::error("Erro Updating",403,"Only Administrator can update info of other user");
+                return ApiResponse::error("Erro permission",403,"Only Administrator can update info of other user");
             }
 
             $data =  $request->validate([

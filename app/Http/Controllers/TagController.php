@@ -113,6 +113,13 @@ class TagController extends Controller
     public function store(Request $request)
     {
         try{
+            /** @var User $actor_user description */
+            $actor_user = Auth::user();
+
+            if(!$actor_user->IsAdministrator()){
+                return ApiResponse::error("Only Administrator can create tag.",401);
+            }
+
             $data = $request->validate([
                 "label"=>["required","string","max:50","min:5"]
             ]);

@@ -75,14 +75,19 @@ class CodeController extends Controller
     public function store(Request $request)
     {        
         try {
-            
+            /** @var User $user description */
+            $user = Auth::user();
+            if($user->IsCustomer()){
+                return ApiResponse::error("Customer can't create code promo",400);
+            }
+
             $data = $request->validate([
                 "code"=>["nullable","string","min:6","max:20","unique:".Code::class],
                 "price"=>["required","number","min:0.01","max:1"],
                 "expire_at"=>["nullable","date"],
             ]);
 
-            $data["user_id"]= $request->user()->id;
+            $data["user_id"]= $user->id;
 
             if(count($data)==0){
                 return ApiResponse::error("Error creating",400,"Aucun donnée valide reçue");
@@ -298,13 +303,19 @@ class CodeController extends Controller
      */
     public function destroy(Request $request,string $id)
     {
+        /** @var User $user description */
+        $user = Auth::user();
+        if($user->IsCustomer()){
+            return ApiResponse::error("Customer can't delete code promo",400);
+        }
+
         $code= Code::find($id);
         
         if(!$code){
             return ApiResponse::error("Code Not found",404);
         }
-
-        if($request->user()->id !=$code->user_id){
+        
+        if($user->id !=$code->user_id && !$user->IsAdministrator()){
             return ApiResponse::error("You are not allowed to delete ohters's code",403);
         }
         

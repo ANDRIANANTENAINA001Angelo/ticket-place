@@ -20,7 +20,8 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      */
-        /**
+        
+     /**
     * @OA\Get(
     *      path="/api/events",
     *      tags={"Events"},
@@ -57,7 +58,8 @@ class EventController extends Controller
             if(count($events)==0){
                 return ApiResponse::error("No event found",404);
             }
-            return ApiResponse::success($events);
+            return response()->json($events);
+            // return ApiResponse::success($events);
         }
         catch(Exception $e){
             return ApiResponse::error("server error",500,$e->getMessage());
@@ -153,6 +155,13 @@ class EventController extends Controller
     public function store(Request $request)
     {
         try{
+
+            /** @var User $user description */
+            $user = Auth::user();
+            if(!$user->IsOrganiser()){
+                return ApiResponse::error("Only Organiser can create event.",401);
+            }
+
             $data = $request->validate([
                 "titre"=>["required","string","max:150","min:10"],
                 "description"=>["required","string","min:20"],
@@ -162,9 +171,8 @@ class EventController extends Controller
                 "tag_id"=>["required","integer","exists:tags,id"],
                 "image"=>["nullable","file","max:10240"]
             ]);
-            $user_id= Auth::user()->id;
-
-            $data["user_id"]= $user_id;
+ 
+            $data["user_id"]= $user->id;
             
             if($request->hasFile("image")){
                 $data["image"]= $this->saveImage($request);
@@ -343,16 +351,21 @@ class EventController extends Controller
             // Log::info('Request content type: ' . $request->header('Content-Type'));
             // Log::info('Request body: ' . $request->getContent());
             $Event = Event::find($id);
+            
             if(!$Event){
                 return ApiResponse::error("Event nout found",404);
             }
-
+            
             /** @var User $actor_user description */
             $actor_user= Auth::user();
-            if(!$actor_user->IsAdministrator()){
-                return ApiResponse::error("Only Administrator can update tag",403);
+            if(!$actor_user->IsOrganiser()){
+                return ApiResponse::error("Only Organiser can update event.",401);
             }
 
+            if($actor_user->id != $Event->user_id){
+                return ApiResponse::error("You can't update other's event",403);
+            }
+            
             $data = $request->validate([
                 "titre"=>["nullable","string","max:150","min:10"],
                 "description"=>["nullable","string","min:20"],
@@ -361,17 +374,17 @@ class EventController extends Controller
                 "heure"=>["nullable","date_format:H:i"],
                 "tag_id"=>["nullable","integer","exists:tags,id"],
                 "image"=>["nullable","file","max:10240"]
-            
+                
             ]);
             
-
+            
             // dd($request->hasFile("image"));
             if($request->hasFile("image")){
                 $file = $request->file('image');
                 // dd($file->getClientOriginalName(), $file->getSize(), $file->getMimeType());
                 $oldImagePath= $Event->image;
                 $data["image"]= $this->saveImage($request);
-
+                
                 if($oldImagePath!=null){
                     $this->deleteOldImage($oldImagePath);
                 }
@@ -443,6 +456,9 @@ class EventController extends Controller
                 return ApiResponse::error("You can't delete other's event",403);
             }
 
+            if($event->status =="published"){
+                return ApiResponse::error("Only events created or finished can be deleted.",400);
+            }
 
             $event->delete();
             return ApiResponse::success([],"event deleted");
@@ -933,7 +949,56 @@ class EventController extends Controller
         }
     }
 
+    /**
+    * @OA\Get(
+    *      path="/api/finished-events",
+    *      tags={"Events"},
+    *      summary="Get All Events Finished",
+    *      description="return list of the all event Event finished",
+    *          @OA\Response(
+    *              response=200,
+    *              description="successful operation"
+    *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+    *          @OA\Response(
+    *              response=404,
+    *              description="aucun résultat trouvé"
+    *          ),
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
+    public function finished()
+    {
+        try{
+            // $events = Event::all();
+            $events = Event::where("status","=","finished")->with(["tag","type_places"])->paginate(5);
+            // $events = Event::where("status","=","published")->where("status","!=","finished")->with(["tag","type_places"])->get();
+            if(count($events)==0){
+                return ApiResponse::error("No event found",404);
+            }
+            return response()->json($events);
+            // return ApiResponse::success($events);
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
 
 
-    
+
+
+
 }
+
+
+

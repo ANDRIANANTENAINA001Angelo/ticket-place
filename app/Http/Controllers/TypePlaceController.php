@@ -181,8 +181,12 @@ class TypePlaceController extends Controller
     {
         try{
 
+            $user_id= Auth::user()->id;
             $type_place = TypePlace::find($id);
             
+            if($user_id!= $type_place->event->user_id){
+                return ApiResponse::error("You can't update other's type event info",403);
+            }
             
             if(!$type_place){
                 return ApiResponse::error("Type Place not found",404);
@@ -286,9 +290,10 @@ class TypePlaceController extends Controller
                 return ApiResponse::error("Type Place not found",404);
             }
             
-            $user_id= Auth::user()->id;
+            /** @var User $user description */
+            $user= Auth::user();
     
-            if($user_id != $type_place->event->user->id){
+            if($user->id != $type_place->event->user->id && !$user->IsAdministrator()){
                 return ApiResponse::error("You can't delete other's event info",403);
             }
     
