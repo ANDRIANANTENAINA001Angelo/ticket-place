@@ -35,6 +35,8 @@ protected $casts = [
     
 ];
 
+protected $appends =["tickets"];
+
 // Accessor pour formater la date
 public function getDateAttribute($value)
 {
@@ -112,6 +114,19 @@ public function getUpdatedAtAttribute($value)
         return Attribute::make(
             get: fn (?string $value) => $value ? FileManip::PathToUrl($value) : null,
         );
+    }
+
+    public function getTicketsAttribute(){
+        $tickets=[];
+        /** @var TypePlace $type_place description */
+        $type_places = $this->type_places;
+        foreach ($type_places as $type_place) {
+            if(count($type_place->tickets)!=0){
+                array_push($tickets,$type_place->tickets);
+            }
+        }
+
+        return $tickets;
     }
 
 }

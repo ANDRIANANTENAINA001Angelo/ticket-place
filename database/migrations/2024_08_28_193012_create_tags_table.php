@@ -19,11 +19,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create("event_tag",function (Blueprint $table){
-            $table->foreignIdFor(Event::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Tag::class)->constrained()->cascadeOnDelete();
-            $table->primary(["event_id","tag_id"]);
-        });
+
     }
 
     /**
@@ -31,7 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('event_tag');
         Schema::dropIfExists('tags');
     }
 };

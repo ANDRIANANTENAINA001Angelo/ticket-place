@@ -53,8 +53,7 @@ class EventController extends Controller
     {
         try{
             // $events = Event::all();
-            $events = Event::where("status","=","published")->where("status","!=","finished")->with(["tag","type_places"])->paginate(5);
-            // $events = Event::where("status","=","published")->where("status","!=","finished")->with(["tag","type_places"])->get();
+            $events = Event::where("status","=","published")->with(["tag","type_places"])->paginate(5);
             if(count($events)==0){
                 return ApiResponse::error("No event found",404);
             }
@@ -356,6 +355,10 @@ class EventController extends Controller
                 return ApiResponse::error("Event nout found",404);
             }
             
+            if($Event->IsPublished()){
+                return ApiResponse::error("Event published can't be updated",401);
+            }
+
             /** @var User $actor_user description */
             $actor_user= Auth::user();
             if(!$actor_user->IsOrganiser()){
@@ -456,7 +459,7 @@ class EventController extends Controller
                 return ApiResponse::error("You can't delete other's event",403);
             }
 
-            if($event->status =="published"){
+            if($event->IsPublished()){
                 return ApiResponse::error("Only events created or finished can be deleted.",400);
             }
 
@@ -559,7 +562,7 @@ class EventController extends Controller
            
             
             $query = Event::query();
-            $query->with("type_places","tag")->where("status","=","published")->where("status","!=","finished");
+            $query->with("type_places","tag")->where("status","=","published");
     
             if (!empty($title)) {
                 $query->where('titre', 'LIKE', '%' . $title . '%')->orWhere("description","LIKE","%".$title."%");
@@ -768,8 +771,12 @@ class EventController extends Controller
             }
 
 
-            if($event->status=="published"){
+            if($event->IsPublished()){
                 return ApiResponse::error("Event already published",400);
+            }
+
+            if($event->IsFinished()){
+                return ApiResponse::error("Event finished, can't be published",400);
             }
 
             if(count($event->type_places)==0){
@@ -856,7 +863,7 @@ class EventController extends Controller
            
             
             $query = Event::query();
-            $query->with("type_places","tag")->where("status","=","published")->where("status","!=","finished");
+            $query->with("type_places","tag")->where("status","=","published");
     
             if (!empty($min_price) && !empty($max_price)) {
                 $query->whereHas('type_places', function ($q) use ($min_price, $max_price) {
@@ -924,7 +931,7 @@ class EventController extends Controller
             $text = (string)$request->input('text');
             
             $query = Event::query();
-            $query->with("type_places","tag")->where("status","=","published")->where("status","!=","finished");
+            $query->with("type_places","tag")->where("status","=","published");
     
             if (!empty($text)) {
                 $query->where('titre', 'LIKE', '%' . $text . '%')

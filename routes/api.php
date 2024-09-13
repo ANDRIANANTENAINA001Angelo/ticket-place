@@ -15,6 +15,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TypePlaceController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\CheckUpdateMiddleware;
 use App\Http\Middleware\IsOrganiserMiddleware;
 use App\Models\TypePlace;
 use Illuminate\Http\Request;
@@ -35,9 +36,9 @@ use Illuminate\Support\Facades\Route;
 
 
 // AUTH
-Route::post('/register', [RegisteredUserController::class, 'store']);
-Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware(['auth:sanctum']);
+Route::post('/register', [RegisteredUserController::class, 'store'])->middleware([CheckUpdateMiddleware::class]);
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])->middleware([CheckUpdateMiddleware::class]);
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware(['auth:sanctum',CheckUpdateMiddleware::class]);
 Route::get("/app/failed-auth",function(){
     return ApiResponse::error("Failed Authentication",401);
 })->name('failed-auth');
@@ -62,7 +63,7 @@ Route::get("/users",[UserController::class,"index"]);
 Route::get("/users/{user}",[UserController::class,"show"]);
 Route::put("/users/{user}",[UserController::class,"update"])->middleware(['auth:sanctum']);
 Route::delete("/users/{user}",[UserController::class,"destroy"])->middleware(['auth:sanctum']);
-Route::get('/profile', [UserController::class,"profile"])->middleware(['auth:sanctum']);
+Route::get('/profile', [UserController::class,"profile"])->middleware(['auth:sanctum',CheckUpdateMiddleware::class]);
 Route::get("my-notifications",[UserController::class,"notifications"])->middleware(["auth:sanctum"]);
 Route::get("my-tickets",[TicketController::class,"userTickets"])->middleware(["auth:sanctum"]);
 
@@ -77,7 +78,9 @@ Route::post("/generate-code",[CodeController::class,"GenerateRandomUniqueCode"])
 
 
 //TAGS
-Route::resource("tags",TagController::class)->middleware(["auth:sanctum"]);
+Route::resource("tags",TagController::class)->except(["index","show"])->middleware(["auth:sanctum"]);
+Route::get("tags",[TagController::class,"index"])->middleware(CheckUpdateMiddleware::class);
+Route::get("tags/{id}",[TagController::class,"show"]);
 
 
 //EVENTS
@@ -103,17 +106,17 @@ Route::delete("/event-type-place/{id}",[TypePlaceController::class,"destroy"])->
 
 //CART
 // Get user cart
-Route::get("/cart",[CartController::class,"getUserCart"])->middleware(["auth:sanctum"]);
+Route::get("/cart",[CartController::class,"getUserCart"]);
 // Add items to cart
-Route::post("/cart/add",[CartController::class,"store"])->middleware(["auth:sanctum"]);
+Route::post("/cart/add",[CartController::class,"store"])->middleware(["auth:sanctum",CheckUpdateMiddleware::class]);
 // Update items in cart
-Route::put("/cart/update",[CartController::class,"update"])->middleware(["auth:sanctum"]);
+Route::put("/cart/update",[CartController::class,"update"])->middleware(["auth:sanctum",CheckUpdateMiddleware::class]);
 // Clear all items from cart
-Route::delete("/cart/clear",[CartController::class,"clear"])->middleware(["auth:sanctum"]);
+Route::delete("/cart/clear",[CartController::class,"clear"])->middleware(["auth:sanctum",CheckUpdateMiddleware::class]);
 // Remove specific item from cart
-Route::delete("/cart/remove/item",[CartController::class,"removeItem"])->middleware(["auth:sanctum"]);
+Route::delete("/cart/remove/item",[CartController::class,"removeItem"])->middleware(["auth:sanctum",CheckUpdateMiddleware::class]);
 // Confirm and pay the cart
-Route::post("/cart/pay",[CartController::class,"pay"])->middleware(["auth:sanctum"]);
+Route::post("/cart/pay",[CartController::class,"pay"])->middleware(["auth:sanctum",CheckUpdateMiddleware::class]);
 Route::post("/cart/evaluation",[CartController::class,"evaluate"])->middleware("auth:sanctum");
 
 //Test 
