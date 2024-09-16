@@ -679,6 +679,10 @@ class EventController extends Controller
                 return ApiResponse::error("Event not found",404);
             }
 
+            if($event->IsPublished() || $event->IsFinished()){
+                return ApiResponse::error("You can't add place to event published or finished",401);
+            }
+
             $user_id= Auth::user()->id;
             if($user_id!= $event->user_id){
                 return ApiResponse::error("You can't update other's event info",403);
@@ -989,6 +993,52 @@ class EventController extends Controller
         try{
             // $events = Event::all();
             $events = Event::where("status","=","finished")->with(["tag","type_places"])->paginate(5);
+            // $events = Event::where("status","=","published")->where("status","!=","finished")->with(["tag","type_places"])->get();
+            if(count($events)==0){
+                return ApiResponse::error("No event found",404);
+            }
+            return response()->json($events);
+            // return ApiResponse::success($events);
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
+
+
+        /**
+    * @OA\Get(
+    *      path="/api/created-events",
+    *      tags={"Events"},
+    *      summary="Get All Events created",
+    *      description="return list of the all event Event finished",
+    *          @OA\Response(
+    *              response=200,
+    *              description="successful operation"
+    *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+    *          @OA\Response(
+    *              response=404,
+    *              description="aucun résultat trouvé"
+    *          ),
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
+    public function created()
+    {
+        try{
+            // $events = Event::all();
+            $events = Event::where("status","=","created")->with(["tag","type_places"])->paginate(5);
             // $events = Event::where("status","=","published")->where("status","!=","finished")->with(["tag","type_places"])->get();
             if(count($events)==0){
                 return ApiResponse::error("No event found",404);

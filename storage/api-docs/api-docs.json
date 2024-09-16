@@ -1374,6 +1374,33 @@
                 }
             }
         },
+        "/api/created-events": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Get All Events created",
+                "description": "return list of the all event Event finished",
+                "operationId": "d06daf5572da954b6517280018071a8e",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
         "/api/tags": {
             "get": {
                 "tags": [

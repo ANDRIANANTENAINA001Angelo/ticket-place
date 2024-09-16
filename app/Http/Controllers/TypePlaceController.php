@@ -184,14 +184,15 @@ class TypePlaceController extends Controller
             $user_id= Auth::user()->id;
             $type_place = TypePlace::find($id);
             
-            if($user_id!= $type_place->event->user_id){
-                return ApiResponse::error("You can't update other's type event info",403);
-            }
             
             if(!$type_place){
                 return ApiResponse::error("Type Place not found",404);
             }
-         
+            
+            if($user_id!= $type_place->event->user_id){
+                return ApiResponse::error("You can't update other's type event info",403);
+            }
+
             if($type_place->event->status =="published"){
                 return ApiResponse::error("Event published's info, can't be updated",403);
             }
@@ -199,10 +200,6 @@ class TypePlaceController extends Controller
             $user_id= Auth::user()->id;
             $event = $type_place->event;
     
-            // dd($user_id,$type_place->event->user->id);
-            if($user_id != $type_place->event->user->id){
-                return ApiResponse::error("You can't update other's event info",403);
-            }
     
             $data = $request->validate([
                 "nom"=>[

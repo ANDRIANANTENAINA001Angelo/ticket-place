@@ -102,7 +102,7 @@ public function getUpdatedAtAttribute($value)
         return false;
     }
 
-    public function isFinished():bool{
+    public function IsFinished():bool{
         if($this->status=="finished"){
             return true;
         }
