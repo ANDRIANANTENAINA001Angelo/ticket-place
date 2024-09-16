@@ -859,23 +859,21 @@ class EventController extends Controller
     *          )
     *)  
     */
-    public function searchPrice(Request $request){
-        try{
-
-            $min_price= (int)$request->input("min_price");
-            $max_price= (int)$request->input("max_price");
-           
+    public function searchPrice(Request $request)
+    {
+        try {
+            $min_price = (int) $request->input("min_price");
+            $max_price = (int) $request->input("max_price");
             
-            $query = Event::query();
-            $query->with("type_places","tag")->where("status","=","published");
+            $query = Event::with("type_places", "tag")->where("status", "=", "published");
     
             if (!empty($min_price) && !empty($max_price)) {
                 $query->whereHas('type_places', function ($q) use ($min_price, $max_price) {
                     $q->whereBetween('prix', [$min_price, $max_price]);
                 });
             } elseif (!empty($min_price)) {
-                $query->whereHas('tag', function ($q) use ($min_price) {
-                    $q->where('type_places', '>=', $min_price);
+                $query->whereHas('type_places', function ($q) use ($min_price) {
+                    $q->where('prix', '>=', $min_price);
                 });
             } elseif (!empty($max_price)) {
                 $query->whereHas('type_places', function ($q) use ($max_price) {
@@ -883,20 +881,18 @@ class EventController extends Controller
                 });
             }
     
-           
             $events = $query->get();
     
-            if(count($events)==0){
-                return ApiResponse::error("No Event found, for this filter",404);
-            }
-            else{
+            if (count($events) == 0) {
+                return ApiResponse::error("No Event found for this filter", 404);
+            } else {
                 return ApiResponse::success($events);
             }
-        }
-        catch(Exception $e){
-            return ApiResponse::error("server error",500,$e->getMessage());
+        } catch (Exception $e) {
+            return ApiResponse::error("server error", 500, $e->getMessage());
         }
     }
+    
 
 
 
@@ -938,12 +934,14 @@ class EventController extends Controller
             $query->with("type_places","tag")->where("status","=","published");
     
             if (!empty($text)) {
-                $query->where('titre', 'LIKE', '%' . $text . '%')
-                      ->orWhere("description", "LIKE", "%" . $text . "%")
-                      ->orWhere("localisation", "LIKE", "%" . $text . "%")
+                $query->where(function ($q) use ($text) {
+                    $q->where('titre', 'LIKE', '%' . $text . '%')
+                      ->orWhere('description', 'LIKE', '%' . $text . '%')
+                      ->orWhere('localisation', 'LIKE', '%' . $text . '%')
                       ->orWhereHas('tag', function ($q) use ($text) {
-                          $q->where('label', "LIKE", "%" . $text . "%");
+                          $q->where('label', 'LIKE', '%' . $text . '%');
                       });
+                });
             }
                
             $events = $query->get();
