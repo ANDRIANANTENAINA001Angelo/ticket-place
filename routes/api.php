@@ -107,7 +107,7 @@ Route::delete("/event-type-place/{id}",[TypePlaceController::class,"destroy"])->
 
 //CART
 // Get user cart
-Route::get("/cart",[CartController::class,"getUserCart"]);
+Route::get("/cart",[CartController::class,"getUserCart"])->middleware("auth:sanctum");
 // Add items to cart
 Route::post("/cart/add",[CartController::class,"store"])->middleware(["auth:sanctum",CheckUpdateMiddleware::class]);
 // Update items in cart

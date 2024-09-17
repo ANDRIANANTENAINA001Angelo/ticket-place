@@ -58,6 +58,7 @@ class CartController extends Controller
             
             /** @var User $user description */
             $user = Auth::user();
+            // dd($user);
             if($user->IsAdministrator()){
                 return ApiResponse::error("Administrator have not Cart",400);
             }
@@ -514,11 +515,12 @@ class CartController extends Controller
 
                 if(count($request->all())>0){
                     $reduction = $this->evaluate($request,false);
-                    $dataUpdate["code_id"]= $reduction["code_id"];
+                    $dataUpdated["code_id"]= $reduction["code_id"];
                 }
+
                 $tickets = $this->generateTicketEachItems($cart,$user->id);
                 
-                $cart->update($dataUpdate);
+                $cart->update($dataUpdated);
                 $cart->save();
                 
                 // create new empty cart
@@ -567,11 +569,13 @@ class CartController extends Controller
             foreach ($items as $item) {
                 for($i=0;$i < $item->nombre;$i++){
                     $reference = $item->type_place->generateReference();
+                    
                     $ticket = Ticket::create([
                         "user_id"=>$customer_id,
                         "type_place_id"=>$item->type_place->id,
                         "reference"=>$reference
                     ]);
+
                     array_push($tickets,$ticket);
                 }
             }
