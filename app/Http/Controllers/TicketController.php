@@ -44,8 +44,40 @@ class TicketController extends Controller
             return ApiResponse::error("No ticket found",404);
         }
 
-        return ApiResponse::success(["tickets"=>$tickets]);
+        // Groupement des tickets par la clé 'created_at'
+        $groupedTickets = $tickets->groupBy('created_at');
+
+        return ApiResponse::success(["tickets"=>$groupedTickets]);
     }
+    // public function userTickets(Request $request){
+    //     /** @var User $user description */
+    //     $user = Auth::user();
+
+    //     if($user->IsAdministrator()){
+    //         return ApiResponse::error("Administrator have not Tickets",400);
+    //     }
+
+    //     $tickets_id= [];
+    //     foreach ($user->tickets as $ticket) {
+    //         array_push($tickets_id,$ticket->id);
+    //     }
+
+    //     $type_places_id= [];
+    //     $events_id=[];
+    //     foreach ($user->tickets->type_place as $type_place) {
+    //         array_push($type_places_id,$type_place->id);
+    //         array_push($events_id,$type_place->event_id);
+    //     }
+
+    //     $events=[];
+    //     foreach ($events_id as $id) {
+    //         array_push($events,Event::find($events_id));
+    //     }
+        
+
+    // } 
+
+
 
 
      /**
