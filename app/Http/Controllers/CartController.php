@@ -690,10 +690,15 @@ class CartController extends Controller
             $user = Auth::user();
 
             if($user->IsAdministrator()){
-                $carts= Cart::where("status","purchased")->get();
+                $carts= Cart::where("status","purchased")
+                        ->orderBy('created_at', 'asc')        
+                        ->get();
             }
             else{
-                $carts= $carts= Cart::where("status","purchased")->where("user_id",$user->id)->get();
+                $carts= $carts= Cart::where("status","purchased")
+                            ->orderBy('created_at', 'asc')
+                            ->where("user_id",$user->id)
+                            ->get();
             }
             
             if($carts->isEmpty()){
