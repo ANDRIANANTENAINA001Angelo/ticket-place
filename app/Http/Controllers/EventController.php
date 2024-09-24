@@ -53,7 +53,11 @@ class EventController extends Controller
     {
         try{
             // $events = Event::all();
-            $events = Event::where("status","=","published")->with(["tag","type_places"])->paginate(5);
+            $events = Event::where("status","=","published")
+                ->with(["tag","type_places"])
+                ->orderBy('date', 'asc')
+                ->paginate(5);
+                
             if(count($events)==0){
                 return ApiResponse::error("No event found",404);
             }
