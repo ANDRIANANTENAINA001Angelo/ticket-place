@@ -132,3 +132,5 @@ Route::get("/test/get-reference/{id}",[TestController::class,"reference"])->midd
 //dashboard
 
 Route::get("/dashboard/resume",[DashboardController::class,"getResume"])->middleware(["auth:sanctum"]);
+Route::get("/dashboard/sales",[DashboardController::class,"getGetSales"])->middleware(["auth:sanctum"]);
+Route::get("/dashboard/year-stat/{year}",[DashboardController::class,"getStatYears"])->middleware(["auth:sanctum"]);

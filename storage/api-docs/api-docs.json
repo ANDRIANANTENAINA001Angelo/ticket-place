@@ -863,6 +863,80 @@
                 }
             }
         },
+        "/api/dashboard/resume": {
+            "get": {
+                "tags": [
+                    "Dashborad"
+                ],
+                "summary": "Dashbord Info",
+                "description": "return the resume stats info",
+                "operationId": "b693920c3e16accf6807b7ac4d6e47a2",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/dashboard/sales": {
+            "get": {
+                "tags": [
+                    "Dashborad"
+                ],
+                "summary": "Dashbord Sale's Info",
+                "description": "return the resume sale's info",
+                "operationId": "422153fe6e1c1ceb2caf17e63d16e92e",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/dashboard/year-stat/{year}": {
+            "get": {
+                "tags": [
+                    "Dashborad"
+                ],
+                "summary": "Dashbord Stat year Info",
+                "description": "return the stat year",
+                "operationId": "a1645745db3c1a27de6804108f2b3a05",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "path",
+                        "description": "The Year",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
         "/api/events": {
             "get": {
                 "tags": [
@@ -2091,6 +2165,10 @@
         {
             "name": "Codes",
             "description": "Codes"
+        },
+        {
+            "name": "Dashborad",
+            "description": "Dashborad"
         },
         {
             "name": "Events",
