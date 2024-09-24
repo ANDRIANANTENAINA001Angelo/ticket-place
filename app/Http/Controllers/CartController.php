@@ -699,8 +699,9 @@ class CartController extends Controller
             if($carts->isEmpty()){
                 return ApiResponse::error("no payment done actually",404);
             }            
-            
-            return ApiResponse::success($carts);
+
+            $cartsSorted = $carts->sortByDesc('updated_at');
+            return ApiResponse::success($cartsSorted);
             
         }
         catch(Exception $e){

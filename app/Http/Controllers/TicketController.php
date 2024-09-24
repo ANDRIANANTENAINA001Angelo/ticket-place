@@ -44,8 +44,11 @@ class TicketController extends Controller
             return ApiResponse::error("No ticket found",404);
         }
 
+        // Trier les tickets par 'created_at' de manière décroissante
+        $ticketsSorted = $tickets->sortByDesc('created_at');
+        
         // Groupement des tickets par 'created_at' et conversion en tableau
-        $groupedTickets = $tickets->groupBy('created_at')->map(function ($group) {
+        $groupedTickets = $ticketsSorted->groupBy('created_at')->map(function ($group) {
             return $group->toArray();
         })->toArray();
 
