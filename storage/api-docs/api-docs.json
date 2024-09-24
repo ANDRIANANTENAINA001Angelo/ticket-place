@@ -644,6 +644,33 @@
                 }
             }
         },
+        "/api/pay/history": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Get payment history",
+                "description": "return user's payment history",
+                "operationId": "cb9363fd0cbd13db886001fbcdc5635a",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
         "/api/codes": {
             "get": {
                 "tags": [
@@ -925,6 +952,33 @@
                     },
                     "403": {
                         "description": "action forbiden"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/grouped-event": {
+            "get": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Get All Events Grouped by tag",
+                "description": "return list of the all event Event group by tag",
+                "operationId": "bb86ac8952f5b3b1377170a5fde4aa61",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
                     },
                     "500": {
                         "description": "erreur serveur"

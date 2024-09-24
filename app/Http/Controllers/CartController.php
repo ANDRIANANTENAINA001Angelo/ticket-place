@@ -652,6 +652,61 @@ class CartController extends Controller
     }
 
 
+        
+    /**
+    * @OA\Get(
+    *      path="/api/pay/history",
+    *      tags={"Cart"},
+    *      summary="Get payment history",
+    *      description="return user's payment history",
+    *          @OA\Response(
+    *              response=200,
+    *              description="successful operation"
+    *          ),
+    *          @OA\Response(
+    *              response=404,
+    *              description="aucun résultat trouvé"
+    *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
+    public function payHistory(Request $request){
+        try{
+            
+            /** @var User $user description */
+            $user = Auth::user();
+
+            if($user->IsAdministrator()){
+                $carts= Cart::where("status","purchased")->get();
+            }
+            else{
+                $carts= $carts= Cart::where("status","purchased")->where("user_id",$user->id)->get();
+            }
+            
+            if($carts->isEmpty()){
+                return ApiResponse::error("no payment done actually",404);
+            }            
+            
+            return ApiResponse::success($carts);
+            
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+
+    }
+
 
 
 }

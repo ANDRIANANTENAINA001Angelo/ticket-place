@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
+use Carbon\Carbon;
 
 class Cart extends Model
 {
@@ -23,9 +24,13 @@ class Cart extends Model
     ];
 
     protected $hidden=[
+        "id",
         'user_id',
         "created_at",
-        "updated_at"
+        // "updated_at",
+        "status",
+        "montant_reduite",
+        "code_id"
     ];
 
    
@@ -40,6 +45,12 @@ class Cart extends Model
         else{
             return $this->montant;
         }
+    }
+
+    // Accessor pour formater updated_at
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans(); 
     }
 
     /**

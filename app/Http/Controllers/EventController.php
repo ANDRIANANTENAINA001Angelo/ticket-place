@@ -65,6 +65,56 @@ class EventController extends Controller
         }
     }
 
+
+    /**
+    * @OA\Get(
+    *      path="/api/grouped-event",
+    *      tags={"Events"},
+    *      summary="Get All Events Grouped by tag",
+    *      description="return list of the all event Event group by tag",
+    *          @OA\Response(
+    *              response=200,
+    *              description="successful operation"
+    *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+    *          @OA\Response(
+    *              response=404,
+    *              description="aucun résultat trouvé"
+    *          ),
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
+    public function grouped()
+    {
+        try{
+            // $events = Event::all();
+            $events = Event::where("status","=","published")->with(["tag","type_places"])->get();
+            if($events->isEmpty()){
+                return ApiResponse::error("No event found",404);
+            }
+
+            
+            $groupedEvent= $events->groupBy("tag.label");
+
+            return ApiResponse::success($groupedEvent);
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
+
+
+
     /**
      * Show the form for creating a new resource.
      */

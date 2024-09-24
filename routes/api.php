@@ -89,6 +89,7 @@ Route::get("events",[EventController::class,"index"]);
 Route::get("events/{id}",[EventController::class,"show"]);
 Route::post("events/{id}",[EventController::class,"update"])->middleware("auth:sanctum");
 Route::get("/search-event",[EventController::class,"search"]);
+Route::get("/grouped-event",[EventController::class,"grouped"]);
 Route::get("/search-event-price",[EventController::class,"searchPrice"]);
 Route::get("/search-event-text",[EventController::class,"searchText"]);
 Route::get("/finished-events",[EventController::class,"finished"]);
@@ -119,6 +120,8 @@ Route::delete("/cart/remove/item",[CartController::class,"removeItem"])->middlew
 // Confirm and pay the cart
 Route::post("/cart/pay",[CartController::class,"pay"])->middleware(["auth:sanctum",CheckUpdateMiddleware::class]);
 Route::post("/cart/evaluation",[CartController::class,"evaluate"])->middleware("auth:sanctum");
+Route::get("/pay/history",[CartController::class,"payHistory"])->middleware(["auth:sanctum"]);
+
 
 //Test 
 // Route::get("/create-notification",[TestController::class,"CreateNotification"])->middleware("auth:sanctum");
