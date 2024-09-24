@@ -303,7 +303,7 @@ class CartController extends Controller
                     array_push($items,$item);
                 }
 
-                $cart->updatePrice();
+                $cart->updatePrice(true);
                 
                 return ApiResponse::success($items,"Items updated successful");
             }
@@ -506,6 +506,8 @@ class CartController extends Controller
             
             $cart = $user->getCart();
             
+            $cart->updatePrice(true);
+
             if(count($cart->items)==0){
                 return ApiResponse::error("You must add one or more item to cart before purchased it.",401);
             }
