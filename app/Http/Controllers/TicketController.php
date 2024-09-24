@@ -44,10 +44,14 @@ class TicketController extends Controller
             return ApiResponse::error("No ticket found",404);
         }
 
-        // Groupement des tickets par la clé 'created_at'
-        $groupedTickets = $tickets->groupBy('created_at');
+        // Groupement des tickets par 'created_at' et conversion en tableau
+        $groupedTickets = $tickets->groupBy('created_at')->map(function ($group) {
+            return $group->toArray();
+        })->toArray();
 
-        return ApiResponse::success(["tickets"=>$groupedTickets]);
+        // dd($groupedTickets);
+
+        return ApiResponse::success($groupedTickets);
     }
     // public function userTickets(Request $request){
     //     /** @var User $user description */

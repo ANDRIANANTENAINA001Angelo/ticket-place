@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CodeController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TestController;
@@ -127,3 +128,7 @@ Route::get("/pay/history",[CartController::class,"payHistory"])->middleware(["au
 // Route::get("/create-notification",[TestController::class,"CreateNotification"])->middleware("auth:sanctum");
 Route::get("/test/get-reference/{id}",[TestController::class,"reference"])->middleware("auth:sanctum");
 
+
+//dashboard
+
+Route::get("/dashboard/resume",[DashboardController::class,"getResume"])->middleware(["auth:sanctum"]);
