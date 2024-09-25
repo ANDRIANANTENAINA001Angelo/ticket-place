@@ -349,13 +349,14 @@ class UserController extends Controller
             $user = Auth::user();
             if($user->IsOrganiser()){
                 $user["codes"]= $user->codes;
-                $user["events"]= Event::where("user_id","=",$user->id)->get();
+                $user["events"]= Event::where("user_id","=",$user->id)
+                                ->with("type_places")
+                                ->get();
             }
 
             if(!$user->IsAdministrator()){
-                $user["tickets"]=$user->tickets;
+                // $user["tickets"]=$user->tickets;
                 $user["cart"]=$user->getCart();
-
             }
 
             return ApiResponse::success($user,"profile info returned");

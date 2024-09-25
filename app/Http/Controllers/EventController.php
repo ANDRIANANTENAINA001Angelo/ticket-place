@@ -54,9 +54,14 @@ class EventController extends Controller
         try{
             // $events = Event::all();
             $events = Event::where("status","=","published")
-                ->with(["tag","type_places"])
-                ->orderBy('date', 'asc')
-                ->paginate(5);
+            ->with([
+                'tag',
+                'type_places' => function ($query) {
+                    $query->select('id', 'event_id', 'nom',"nombre","prix"); // Sélectionner uniquement les colonnes nécessaires
+                }
+            ])
+            ->orderBy('date', 'asc')
+            ->paginate(5);
                 
             if(count($events)==0){
                 return ApiResponse::error("No event found",404);
@@ -1058,7 +1063,8 @@ class EventController extends Controller
     }
 
 
-        /**
+    
+    /**
     * @OA\Get(
     *      path="/api/created-events",
     *      tags={"Events"},
@@ -1104,6 +1110,75 @@ class EventController extends Controller
     }
 
 
+    /**
+    * @OA\Get(
+    *      path="/api/famous-events",
+    *      tags={"Events"},
+    *      summary="Get 3 Most Famous Events",
+    *      description="return the top 3 Famous Event",
+    *          @OA\Response(
+    *              response=200,
+    *              description="successful operation"
+    *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+    *          @OA\Response(
+    *              response=404,
+    *              description="aucun résultat trouvé"
+    *          ),
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
+    public function famousEvent(Request $request)
+    {
+        try {
+            // Récupérer les 3 événements les plus populaires (plus de tickets vendus)
+            $events = Event::where('status', 'published')
+                ->with(['type_places' => function ($query) {
+                    // Charger uniquement l'ID et les colonnes nécessaires des 'type_places'
+                    $query->select('id', 'event_id',"nom","nombre","prix"); // Sélectionne uniquement 'id' et 'event_id' des 'type_places'
+                }])
+                ->get()
+                ->sortByDesc(function ($event) {
+                    // Calculer le nombre total de tickets vendus pour chaque event
+                    return $event->type_places->sum(function ($typePlace) {
+                        return $typePlace->tickets()->count(); // Compter les tickets sans les charger
+                    });
+                })
+                ->take(3); // Limiter à 3 événements
+
+            if ($events->isEmpty()) {
+                return ApiResponse::error("No popular events found", 404);
+            }
+
+            // Mapper les données pour retourner uniquement ce qui est nécessaire
+            $response = $events->map(function ($event) {
+                return [
+                    // 'event_id' => $event->id,
+                    // 'title' => $event->title,
+                    "event"=>$event,
+                    'total_tickets_sold' => $event->type_places->sum(function ($typePlace) {
+                        return $typePlace->tickets()->count(); // Calculer le nombre total de tickets vendus
+                    }),
+                ];
+            });
+
+            return ApiResponse::success($response->toArray());
+        } catch (Exception $e) {
+            return ApiResponse::error("Server error", 500, $e->getMessage());
+        }
+    }
+
+    
 
 
 

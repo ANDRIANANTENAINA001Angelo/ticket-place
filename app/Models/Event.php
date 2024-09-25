@@ -35,7 +35,7 @@ protected $casts = [
     
 ];
 
-protected $appends =["tickets"];
+// protected $appends =["tickets"];
 
 // Accessor pour formater la date
 public function getDateAttribute($value)
