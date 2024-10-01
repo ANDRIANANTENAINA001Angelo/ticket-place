@@ -15,6 +15,15 @@ class Event extends Model
 {
     use HasFactory;
 
+    public const STATUS_CREATED="Créer";
+    public const STATUS_PENDING="En Attente";
+    public const STATUS_PUBLISHED="Publier";
+    public const STATUS_UNAPPROVAL="Non Approuvé";
+    public const STATUS_FINISHED="Terminer";
+
+
+
+
     protected $fillable=[
         "titre",
         "description",
@@ -43,6 +52,8 @@ public function getDateAttribute($value)
     return Carbon::parse($value)->translatedFormat('d F Y'); // "24 Aout 2024"
 }
 
+
+
 // Accessor pour formater l'heure
 public function getHeureAttribute($value)
 {
@@ -61,6 +72,16 @@ public function getUpdatedAtAttribute($value)
     return Carbon::parse($value)->diffForHumans(); 
 }
 
+
+    /**
+     * Get all of the Codes for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function codes(): HasMany
+    {
+        return $this->hasMany(Code::class);
+    }
 
     protected $hidden=[
         // "status"
@@ -96,14 +117,14 @@ public function getUpdatedAtAttribute($value)
     }
 
     public function IsPublished():bool{
-        if($this->status=="published"){
+        if($this->status==$this::STATUS_PUBLISHED){
             return true;
         }
         return false;
     }
 
     public function IsFinished():bool{
-        if($this->status=="finished"){
+        if($this->status==$this::STATUS_FINISHED){
             return true;
         }
         return false;

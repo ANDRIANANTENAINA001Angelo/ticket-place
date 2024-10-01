@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string("status")->default("created");//created, purchased
             $table->integer("montant")->default(0);
-            $table->foreignIdFor(User::class);
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Code::class)->nullable();
             $table->timestamps();
         });

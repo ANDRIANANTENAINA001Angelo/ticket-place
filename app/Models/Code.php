@@ -15,13 +15,12 @@ class Code extends Model
         "code",
         "price",
         "expire_at",
-        "user_id"
+        "event_id"
     ];
 
     protected $hidden=[
         "created_at",
-        "updated_at",
-        "user_id"      
+        "updated_at",        
     ];
 
     protected $appends = ["is_expire"];
@@ -53,9 +52,9 @@ class Code extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user(): BelongsTo
+    public function event(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Event::class);
     }
 
 }

@@ -17,6 +17,12 @@ class Item extends Model
         "type_place_id"
     ];
 
+    protected $hidden=[
+        "cart_id",
+        "created_at",
+        "updated_at"
+    ];
+
     /**
      * Get the cart that owns the Item
      *

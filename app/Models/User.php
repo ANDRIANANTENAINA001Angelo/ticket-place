@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\ApiResponse;
+use App\FileManip;
 use Exception;
 use Illuminate\Auth\MustVerifyEmail as AuthMustVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -14,6 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
 {
@@ -31,6 +33,7 @@ class User extends Authenticatable
         "type",
         'email',
         'password',
+        "image"
     ];
 
     /**
@@ -54,6 +57,13 @@ class User extends Authenticatable
     ];
 
 
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn (?string $value) => $value ? FileManip::PathToUrl($value) : null,
+        );
+    }
+
     /**
      * Get all of the tickets for the User
      *
@@ -64,16 +74,6 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class);
     }
 
-
-    /**
-     * Get all of the Codes for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function codes(): HasMany
-    {
-        return $this->hasMany(Code::class);
-    }
 
     /**
      * Get all of the carts for the User

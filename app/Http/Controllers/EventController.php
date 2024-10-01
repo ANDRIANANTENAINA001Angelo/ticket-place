@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use App\FileManip;
+use App\Models\Code;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,7 +54,7 @@ class EventController extends Controller
     {
         try{
             // $events = Event::all();
-            $events = Event::where("status","=","published")
+            $events = Event::where("status","=",Event::STATUS_PUBLISHED)
             ->with([
                 'tag',
                 'type_places' => function ($query) {
@@ -107,7 +108,7 @@ class EventController extends Controller
     {
         try{
             // $events = Event::all();
-            $events = Event::where("status","=","published")->with(["tag","type_places"])->get();
+            $events = Event::where("status","=",Event::STATUS_PUBLISHED)->with(["tag","type_places"])->get();
             if($events->isEmpty()){
                 return ApiResponse::error("No event found",404);
             }
@@ -230,11 +231,10 @@ class EventController extends Controller
                 "image"=>["nullable","file","max:10240"]
             ]);
  
+            $data["status"]= Event::STATUS_CREATED;
             $data["user_id"]= $user->id;
             
-            if($request->hasFile("image")){
-                $data["image"]= $this->saveImage($request);
-            }
+
 
             $event = Event::create($data);
             // $event->tags()->sync($data["tags"]);
@@ -297,6 +297,74 @@ class EventController extends Controller
 
             $event["tag"]= $event->tag;
             $event["type_places"]= $event->type_places;
+            $event["codes"]= $event->codes;
+            
+            
+            return ApiResponse::success($event);
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
+
+
+     /**
+     * @OA\Post(
+     *      path="/api/events/{event_id}/unapprouval",
+     *      tags={"Events"},
+     *      summary="Unapprouval an pending event",
+     *      description="return info of the Event",
+     *       @OA\Parameter(
+     *              name="event_id",
+     *              in="path",
+     *              required=true,
+     *              @OA\Schema(
+     *                  type="string"
+     *              ),
+     *              description="ID of the Event to show"
+     *            ),
+     *          @OA\Response(
+     *              response=200,
+     *              description="successful operation"
+     *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+     *          @OA\Response(
+     *              response=404,
+     *              description="aucun résultat trouvé"
+     *          ),
+     *          @OA\Response(
+     *              response=500,
+     *              description="erreur serveur"
+     *          )
+     *)  
+     */
+    public function unapproval(string $id)
+    {
+        try{
+            /** @var User $user description */            
+            $user= Auth::user();
+
+            if(!$user->IsAdministrator()){
+                return ApiResponse::error("Action Interdit",403,"seulement admin peut faire ça.");
+            }
+
+            $event = Event::find($id);
+
+            if(!$event){
+                return ApiResponse::success([],"Event nout found");
+            }
+
+            if(!$event->status == Event::STATUS_PENDING){
+                return ApiResponse::error("Action non authoriser",401,"seulement event en attent peut ne pas être approuvé.");
+            }
+
             return ApiResponse::success($event);
         }
         catch(Exception $e){
@@ -621,7 +689,7 @@ class EventController extends Controller
            
             
             $query = Event::query();
-            $query->with("type_places","tag")->where("status","=","published");
+            $query->with("type_places","tag")->where("status","=",Event::STATUS_PUBLISHED);
     
             if (!empty($title)) {
                 $query->where('titre', 'LIKE', '%' . $title . '%')->orWhere("description","LIKE","%".$title."%");
@@ -782,6 +850,139 @@ class EventController extends Controller
     }
 
 
+        
+    /**
+     * @OA\Post(
+     *     path="/api/events/{event_id}/add-code-promo",
+     *     tags={"Events"},
+     *     summary="Ajouter des code promo à un événement",
+     *     description="Permet d'ajouter un ou plusieurs code promo à un événement existant.",
+     *     @OA\Parameter(
+     *         name="event_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         ),
+     *         description="ID de l'événement auquel ajouter des codes promo"
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="codes",
+     *                 type="array",
+     *                 minItems=1,
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="code",
+     *                         type="string",
+     *                         description="CodeXXXdDDSS"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="price",
+     *                         type="integer",
+     *                         description="Le pourcentage de réduction."
+     *                     ),
+     *                     @OA\Property(
+     *                         property="expire_at",
+     *                         type="date",
+     *                         description="date expiration, not required, default value 30 days."
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Types de place ajoutés avec succès"
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Données invalides"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Événement non trouvé"
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+     public function addCodePromo(Request $request,string $id){
+        try{
+            $event = Event::find($id);
+            if(!$event){
+                return ApiResponse::success([],"Event not found");
+            }
+
+            if($event->IsPublished() || $event->IsFinished()){
+                return ApiResponse::error("You can't add place to event published or finished",401);
+            }
+
+            $user_id= Auth::user()->id;
+            if($user_id!= $event->user_id){
+                return ApiResponse::error("You can't update other's event info",403);
+            }
+
+            $data = $request->validate([
+                'codes' => 'required|array|min:1',
+                'codes.*.code' => 
+                [
+                    'nullable',
+                    'string',
+                    Rule::unique('codes', 'code')->where(function ($query) use ($event) {
+                        return $query->where('event_id', $event->id);
+                    }),
+                ],
+                'codes.*.price' => ['required',"decimal:1,3",'min:0.001','max:1'],
+                'codes.*.expire_at' => ["nullable","date",'after_or_equal:' . Carbon::now()->addDays(3)->toDateString()],
+            ]);
+
+
+
+            $codes= [];
+            // create all codes promo
+            for($i=0;$i<count($data["codes"]);$i++){
+                $data["codes"][$i]["event_id"]= $event->id;
+
+                if(!isset($data["codes"][$i]["code"])){
+                    $data["codes"][$i]["code"] = $this->GenerateRandomUniqueCode();
+                }
+
+                $code= Code::create($data["codes"][$i]);
+                array_push($codes,$code);
+            }
+
+            return ApiResponse::success($codes,"Code promo added to the event");
+
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+        
+    }
+
+    private function GenerateRandomUniqueCode():string{
+        $codes = Code::pluck("code","id")->toArray();
+        
+        $new_code = Str::random($length=10);
+        // $new_code = Str::uuid();
+        
+        if(count($codes)>0){
+            while (in_array($new_code,$codes)){
+                $new_code = Str::random($length=10);
+                // $new_code = Str::uuid();
+            }
+        }
+
+        return $new_code;
+
+    }
+
     /**
      * @OA\Post(
      *      path="/api/events/{event_id}/publish",
@@ -846,7 +1047,13 @@ class EventController extends Controller
                 return ApiResponse::error("Error published",400,"Event Must have at least one type place before publishement");
             }
 
-            $event->status="published";
+            if($actor_user->IsAdministrator()){
+                $event->status=Event::STATUS_PUBLISHED;
+            }
+            else{
+                $event->status=Event::STATUS_PENDING;
+            }
+
             $event->save();
             
             return ApiResponse::success($event,"Event published");
@@ -924,7 +1131,7 @@ class EventController extends Controller
             $min_price = (int) $request->input("min_price");
             $max_price = (int) $request->input("max_price");
             
-            $query = Event::with("type_places", "tag")->where("status", "=", "published");
+            $query = Event::with("type_places", "tag")->where("status", "=", Event::STATUS_PUBLISHED);
     
             if (!empty($min_price) && !empty($max_price)) {
                 $query->whereHas('type_places', function ($q) use ($min_price, $max_price) {
@@ -990,7 +1197,7 @@ class EventController extends Controller
             $text = (string)$request->input('text');
             
             $query = Event::query();
-            $query->with("type_places","tag")->where("status","=","published");
+            $query->with("type_places","tag")->where("status","=",Event::STATUS_PUBLISHED);
     
             if (!empty($text)) {
                 $query->where(function ($q) use ($text) {
@@ -1049,7 +1256,7 @@ class EventController extends Controller
     {
         try{
             // $events = Event::all();
-            $events = Event::where("status","=","finished")->with(["tag","type_places"])->paginate(5);
+            $events = Event::where("status","=",Event::STATUS_PUBLISHED)->with(["tag","type_places"])->paginate(5);
             // $events = Event::where("status","=","published")->where("status","!=","finished")->with(["tag","type_places"])->get();
             if(count($events)==0){
                 return ApiResponse::error("No event found",404);
@@ -1096,7 +1303,7 @@ class EventController extends Controller
     {
         try{
             // $events = Event::all();
-            $events = Event::where("status","=","created")->with(["tag","type_places"])->paginate(5);
+            $events = Event::where("status","=",Event::STATUS_CREATED)->with(["tag","type_places"])->paginate(5);
             // $events = Event::where("status","=","published")->where("status","!=","finished")->with(["tag","type_places"])->get();
             if(count($events)==0){
                 return ApiResponse::error("No event found",404);
@@ -1142,7 +1349,7 @@ class EventController extends Controller
     {
         try {
             // Récupérer les 3 événements les plus populaires (plus de tickets vendus)
-            $events = Event::where('status', 'published')
+            $events = Event::where('status', Event::STATUS_PUBLISHED)
                 ->with(['type_places' => function ($query) {
                     // Charger uniquement l'ID et les colonnes nécessaires des 'type_places'
                     $query->select('id', 'event_id',"nom","nombre","prix"); // Sélectionne uniquement 'id' et 'event_id' des 'type_places'

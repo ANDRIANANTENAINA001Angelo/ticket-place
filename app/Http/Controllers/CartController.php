@@ -535,7 +535,7 @@ class CartController extends Controller
                 return ApiResponse::success(["tickets"=>$tickets],"Cart Purchased Successful.");
             }
             else{
-                return ApiResponse::error("Error Purchase",401,"One of your type place event have less number free that you need!");
+                return ApiResponse::error("Error Purchase",401,"One of your type place event have less number free that you need! Or All Place come from one event.");
             }
         }
         catch(Exception $e){
@@ -547,13 +547,25 @@ class CartController extends Controller
     private function validateItemsNumber(Cart $cart):bool{
         try{
             $items = $cart->items;
+            $events_id = [];
     
             foreach ($items as $item) {
+                $event_id= $item->type_place->event_id;
+
+                if(!in_array($event_id,$events_id)){
+                    array_push($events_id,$event_id);
+                }
+
                 if($item->nombre > $item->type_place->nombre_place_disponible){
                     return false;
                 }
             }
     
+
+            if(count($events_id)>1){
+                return false;
+            }
+
             return true;
 
         }
@@ -630,8 +642,10 @@ class CartController extends Controller
             $data = $request->validate([
                 "code"=>["required","string","exists:codes,code"]
             ]);
+            // dd($request,$data);
     
-            $code = Code::find($data["code"]);
+            $code = Code::where("code",$data["code"])->get()[0];
+            // dd($code);
             /** @var User $user description */
             $user = Auth::user();
             /** @var Cart $cart description */
@@ -689,10 +703,26 @@ class CartController extends Controller
             /** @var User $user description */
             $user = Auth::user();
 
-            if($user->IsAdministrator()){
+            if(!$user->IsCustomer()){
                 $carts= Cart::where("status","purchased")
+                        ->with("code","user","items","items.type_place")
                         ->orderBy('created_at', 'asc')        
                         ->get();
+                
+
+                if(!$carts->isEmpty()){
+                    if($user->IsOrganiser()){
+                        $res=[];
+                        foreach ($carts as $cart) {
+                            if($cart->organiser_id==$user->id){
+                                array_push($res,$cart);
+                            }
+                        }
+                        $carts= $res;
+                    }
+
+                }
+                    
             }
             else{
                 $carts= $carts= Cart::where("status","purchased")
@@ -701,7 +731,7 @@ class CartController extends Controller
                             ->get();
             }
             
-            if($carts->isEmpty()){
+            if(count($carts)==0){
                 return ApiResponse::error("no payment done actually",404);
             }            
             

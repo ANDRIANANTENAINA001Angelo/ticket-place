@@ -69,7 +69,77 @@ class AuthenticatedSessionController extends Controller
         } else {
             $user= $user->first();
             if(Hash::check($data["password"],$user->password)){
+                $token = $user->createToken(Str::random(15));
+                
+                return ApiResponse::success([
+                    'token' => $token->plainTextToken,
+                    "user"=>$user
+                ],"User connected successfull");       
+            }
+            else{
+                return ApiResponse::error("Login Failed",400,"Password is wrong");
+            }
+        }
+        
+    }
 
+
+     /**
+     * @OA\Post(
+     *      path="/api/loginAdmin",
+     *      tags={"Auth"},
+     *      summary="Loged In Admin",
+     *      description="Connect Admin",
+     *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\MediaType(
+    *              mediaType="application/json",
+    *              @OA\Schema(
+    *                  type="object",
+    *                  @OA\Property(
+    *                      property="email",
+    *                      type="string",
+    *                      example="admin@example.com"
+    *                  ),
+    *                  @OA\Property(
+    *                      property="password",
+    *                      type="string",
+    *                      format="password",
+    *                      example="password123"
+    *                  )
+    *              )
+    *          )
+    *      ),
+     *          @OA\Response(
+     *              response=200,
+     *              description="successful operation"
+     *          ),
+     *          @OA\Response(
+     *              response=404,
+     *              description="user nout found"
+     *          )
+     *)  
+     */
+    // public function store(LoginRequest $request): Response
+    public function storeAdmin(Request $request)
+    {
+        $data = $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        $user = User::where("email", "=", $data["email"])->limit(1)->get();
+        
+        if ($user->isEmpty()) {
+            return ApiResponse::error("Login failed",404,"User with this email not found.");
+        } else {
+            $user= $user->first();
+            if(Hash::check($data["password"],$user->password)){
+
+                if(!$user->IsAdministrator()){
+                    return ApiResponse::error("Erreur Authorisation",403,"Seulement admin se connecte ici.");
+                }
+                
                 $token = $user->createToken(Str::random(15));
                 
                 return ApiResponse::success([

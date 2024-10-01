@@ -88,7 +88,7 @@ class RegisteredUserController extends Controller
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
                 'password' => ['required', 'max:255','min:4'],
                 'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
-                'type' => ['nullable','string',Rule::in(["customer", "organiser", "administrator"])],
+                'type' => ['nullable','string',Rule::in(["customer", "organiser"])],
             ]);
             
             $user = User::create([
@@ -100,14 +100,11 @@ class RegisteredUserController extends Controller
                 'type'=> $request->type
             ]);
     
-            // create user's cart (first)
-            if($request->type !="administrator"){
-                $cart = Cart::create([
-                    "status"=>"created",
-                    "montant"=>0,
-                    "user_id"=>$user->id
-                ]);
-            }
+            $cart = Cart::create([
+                "status"=>"created",
+                "montant"=>0,
+                "user_id"=>$user->id
+            ]);
 
             return ApiResponse::success($user,"User registered");
         }
@@ -116,4 +113,95 @@ class RegisteredUserController extends Controller
         }
         
     }
+
+
+         
+    /**
+     * @OA\Post(
+     *      path="/api/registerAdmin",
+     *      tags={"Auth"},
+     *      summary="Register Admin",
+     *      description="enregistre admin",
+     *      @OA\RequestBody(
+    *          required=true,
+    *          @OA\MediaType(
+    *              mediaType="application/json",
+    *              @OA\Schema(
+    *                  type="object",
+    *                  @OA\Property(
+    *                      property="fname",
+    *                      type="string",
+    *                      example="John"
+    *                  ),
+    *                  @OA\Property(
+    *                      property="lname",
+    *                      type="string",
+    *                      example="Doe"
+    *                  ),
+    *                  @OA\Property(
+    *                      property="email",
+    *                      type="string",
+    *                      example="admin@example.com"
+    *                  ),
+    *                  @OA\Property(
+    *                      property="password",
+    *                      type="string",
+    *                      format="password",
+    *                      example="password123, not required"
+    *                  )
+    *              )
+    *          )
+    *      ),
+     *          @OA\Response(
+     *              response=200,
+     *              description="successful operation"
+     *          ),
+     *          @OA\Response(
+     *              response=400,
+     *              description="donné incomplet"
+     *          ),
+     *          @OA\Response(
+     *              response=500,
+     *              description="erreur serveur"
+     *          )
+     *)  
+     */
+    public function storeAdmin(Request $request)
+    {
+        try{
+            $request->validate([
+                'fname' => ['required', 'string', 'max:255'],
+                'lname' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'password' => ['nullable', 'max:255','min:4'],
+                'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
+            ]);
+
+            $password= $request->password;
+            if(is_null($password)){
+                $password= "admin";
+            }
+            
+            
+            $user = User::create([
+                'fname' => $request->fname,
+                'lname' => $request->lname,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'password' => Hash::make($password),
+                'type'=> "administrator"
+            ]);
+    
+
+            return ApiResponse::success($user,"User registered");
+        }
+        catch(Exception $e){
+            return ApiResponse::error("Server error",500,$e->getMessage());
+        }
+        
+    }
+
+
+
+
 }

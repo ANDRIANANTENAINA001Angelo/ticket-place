@@ -22,7 +22,7 @@ return new class extends Migration
             $table->time("heure");
             $table->string("image")->nullable();
             $table->string("status")->default("created");// created, published, finished
-            $table->foreignIdFor(User::class);
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Tag::class);
             $table->timestamps();
         });

@@ -29,12 +29,13 @@ class Cart extends Model
         "created_at",
         // "updated_at",
         "status",
-        "montant_reduite",
-        "code_id"
+        // "montant_reduite",
+        "code_id",
+        "organiser_id"
     ];
 
    
-    protected $appends =["montant_reduite"];
+    protected $appends =["montant_reduite","organiser_id"];
 
     public function getMontantReduiteAttribute(){
         if(isset($this->code_id)){
@@ -63,6 +64,16 @@ class Cart extends Model
         return $this->belongsTo(User::class);
     }
 
+
+    /**
+     * Get the code that owns the Cart
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function code(): BelongsTo
+    {
+        return $this->belongsTo(Code::class);
+    }
     /**
      * Get all of the items for the Cart
      *
@@ -94,6 +105,16 @@ class Cart extends Model
         // dd($price);
         // dd($this);
 
+    }
+
+    public function getOrganiserIdAttribute(){
+        if (count($this->items)>0){
+            $event = Event::find($this->items[0]->type_place->event_id);
+            return $event->user_id; 
+        }
+        else{
+            return null;
+        }
     }
 
     public function clear(){

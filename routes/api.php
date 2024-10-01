@@ -17,6 +17,7 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TypePlaceController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckUpdateMiddleware;
+use App\Http\Middleware\IsAdministratorMiddleware;
 use App\Http\Middleware\IsOrganiserMiddleware;
 use App\Models\TypePlace;
 use Illuminate\Http\Request;
@@ -38,7 +39,9 @@ use Illuminate\Support\Facades\Route;
 
 // AUTH
 Route::post('/register', [RegisteredUserController::class, 'store'])->middleware([CheckUpdateMiddleware::class]);
+Route::post('/registerAdmin', [RegisteredUserController::class, 'storeAdmin'])->middleware([CheckUpdateMiddleware::class,"auth:sanctum",IsAdministratorMiddleware::class]);
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])->middleware([CheckUpdateMiddleware::class]);
+Route::post('/loginAdmin', [AuthenticatedSessionController::class, 'storeAdmin'])->middleware([CheckUpdateMiddleware::class]);
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware(['auth:sanctum',CheckUpdateMiddleware::class]);
 Route::get("/app/failed-auth",function(){
     return ApiResponse::error("Failed Authentication",401);
@@ -89,6 +92,7 @@ Route::resource("events",EventController::class)->middleware(["auth:sanctum"])->
 Route::get("events",[EventController::class,"index"]);
 Route::get("events/{id}",[EventController::class,"show"]);
 Route::post("events/{id}",[EventController::class,"update"])->middleware("auth:sanctum");
+Route::post("events/{id}/unapprouval",[EventController::class,"unapproval"])->middleware(["auth:sanctum",IsAdministratorMiddleware::class]);
 Route::get("/search-event",[EventController::class,"search"]);
 Route::get("/grouped-event",[EventController::class,"grouped"]);
 Route::get("/search-event-price",[EventController::class,"searchPrice"]);
@@ -102,6 +106,7 @@ Route::get("/events/{id}/tickets",[TicketController::class,"eventTickets"])->mid
 
 //Type events (vip, normale)
 Route::post("/events/{id}/add-type-place",[EventController::class,"addTypePlace"])->middleware(["auth:sanctum"]);
+Route::post("/events/{id}/add-code-promo",[EventController::class,"addCodePromo"])->middleware(["auth:sanctum"]);
 Route::get("/event-type-place",[TypePlaceController::class,"index"]);
 Route::get("/event-type-place/{id}",[TypePlaceController::class,"show"]);
 Route::put("/event-type-place/{id}",[TypePlaceController::class,"update"])->middleware(["auth:sanctum"]);

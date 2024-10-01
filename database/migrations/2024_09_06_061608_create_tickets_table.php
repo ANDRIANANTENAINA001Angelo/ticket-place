@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string("reference")->unique();
-            $table->foreignIdFor(TypePlace::class);
+            $table->foreignIdFor(TypePlace::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class);
             $table->timestamps();
         });

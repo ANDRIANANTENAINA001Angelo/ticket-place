@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer("nombre")->default(100);
             $table->boolean("is_limited")->default(false);
             $table->integer("prix");
-            $table->foreignIdFor(Event::class);
+            $table->foreignIdFor(Event::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

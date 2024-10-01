@@ -62,6 +62,45 @@
                 }
             }
         },
+        "/api/loginAdmin": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Loged In Admin",
+                "description": "Connect Admin",
+                "operationId": "67d49ac15009f02eca7c5e6d5eb977ad",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "admin@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "404": {
+                        "description": "user nout found"
+                    }
+                }
+            }
+        },
         "/api/logout": {
             "post": {
                 "tags": [
@@ -249,6 +288,56 @@
                                     "type": {
                                         "type": "string",
                                         "example": "customer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "donné incomplet"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
+        "/api/registerAdmin": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register Admin",
+                "description": "enregistre admin",
+                "operationId": "d263626cddb00a60619d9f929d680553",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "fname": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lname": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "admin@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123, not required"
                                     }
                                 },
                                 "type": "object"
@@ -1211,6 +1300,44 @@
                 }
             }
         },
+        "/api/events/{event_id}/unapprouval": {
+            "post": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Unapprouval an pending event",
+                "description": "return info of the Event",
+                "operationId": "8aec6988a9881227190e1f172a57c278",
+                "parameters": [
+                    {
+                        "name": "event_id",
+                        "in": "path",
+                        "description": "ID of the Event to show",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "401": {
+                        "description": "action unauthorized"
+                    },
+                    "403": {
+                        "description": "action forbiden"
+                    },
+                    "404": {
+                        "description": "aucun résultat trouvé"
+                    },
+                    "500": {
+                        "description": "erreur serveur"
+                    }
+                }
+            }
+        },
         "/api/search-event": {
             "get": {
                 "tags": [
@@ -1332,6 +1459,77 @@
                                                 "prix": {
                                                     "description": "Le prix de ce type de place",
                                                     "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "minItems": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Types de place ajoutés avec succès"
+                    },
+                    "400": {
+                        "description": "Données invalides"
+                    },
+                    "404": {
+                        "description": "Événement non trouvé"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/events/{event_id}/add-code-promo": {
+            "post": {
+                "tags": [
+                    "Events"
+                ],
+                "summary": "Ajouter des code promo à un événement",
+                "description": "Permet d'ajouter un ou plusieurs code promo à un événement existant.",
+                "operationId": "72bda3368660fd2492ef47f0472ff15e",
+                "parameters": [
+                    {
+                        "name": "event_id",
+                        "in": "path",
+                        "description": "ID de l'événement auquel ajouter des codes promo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "codes": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "code": {
+                                                    "description": "CodeXXXdDDSS",
+                                                    "type": "string"
+                                                },
+                                                "price": {
+                                                    "description": "Le pourcentage de réduction.",
+                                                    "type": "integer"
+                                                },
+                                                "expire_at": {
+                                                    "description": "date expiration, not required, default value 30 days.",
+                                                    "type": "string",
+                                                    "format": "date"
                                                 }
                                             },
                                             "type": "object"

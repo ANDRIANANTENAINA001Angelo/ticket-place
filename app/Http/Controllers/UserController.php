@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\ApiResponse;
+use App\FileManip;
 use App\Models\Event;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -234,7 +237,14 @@ class UserController extends Controller
                 'password' => ['nullable', 'max:255','min:4'],
                 'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
                 'type' => ['nullable','string',Rule::in("customer", "organiser", "administrator")],
+                "image"=>["nullable","file","max:10240"]
             ]);
+
+            if($request->hasFile("image")){
+                $data["image"]= $this->saveImage($request);
+            }
+
+
             
             $user->update($data);
             $user->save();
@@ -244,6 +254,18 @@ class UserController extends Controller
         }
         catch(Exception $e){
             return ApiResponse::error("Error updating",400,$e->getMessage());
+        }
+    }
+
+    private function saveImage(Request $request){
+        try{
+            $image = $request->file("image");
+            $file_name = Str::uuid() . time() . "." . $image->getClientOriginalExtension();
+            $image_path = $image->storeAs("/profile", $file_name, "public");
+            return $image_path;
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",$e->getMessage());
         }
     }
 
@@ -304,6 +326,10 @@ class UserController extends Controller
                 return ApiResponse::error("Error Updating",403,"Only Administrator can delete other user account");
             }
 
+            if(!is_null($user->image)){
+                Storage::delete(FileManip::UrlToPath($user->image));
+            }
+
             $user->delete();
             return ApiResponse::success([],"User deleted");
             
@@ -348,9 +374,8 @@ class UserController extends Controller
             /** @var User $user description */
             $user = Auth::user();
             if($user->IsOrganiser()){
-                $user["codes"]= $user->codes;
                 $user["events"]= Event::where("user_id","=",$user->id)
-                                ->with("type_places")
+                                ->with(["type_places","codes"])
                                 ->get();
             }
 

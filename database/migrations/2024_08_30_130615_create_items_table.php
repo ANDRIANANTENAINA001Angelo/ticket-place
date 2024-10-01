@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->integer("nombre")->default(1);
-            $table->foreignIdFor(Cart::class);
+            $table->foreignIdFor(Cart::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(TypePlace::class);
             $table->timestamps();
         });
