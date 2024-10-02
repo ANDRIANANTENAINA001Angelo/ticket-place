@@ -90,6 +90,7 @@ Route::get("tags/{id}",[TagController::class,"show"]);
 //EVENTS
 Route::resource("events",EventController::class)->middleware(["auth:sanctum"])->except(["create","edit","update","index","show"]);
 Route::get("events",[EventController::class,"index"]);
+Route::get("events-all",[EventController::class,"all"])->middleware("auth:sanctum");
 Route::get("events/{id}",[EventController::class,"show"]);
 Route::post("events/{id}",[EventController::class,"update"])->middleware("auth:sanctum");
 Route::post("events/{id}/unapprouval",[EventController::class,"unapproval"])->middleware(["auth:sanctum",IsAdministratorMiddleware::class]);

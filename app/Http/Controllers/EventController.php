@@ -76,6 +76,80 @@ class EventController extends Controller
     }
 
 
+         
+    /**
+    * @OA\Get(
+    *      path="/api/events-all",
+    *      tags={"Events"},
+    *      summary="Get All Events List",
+    *      description="return list of the all event Event not published",
+    *          @OA\Response(
+    *              response=200,
+    *              description="successful operation"
+    *          ),
+     *          @OA\Response(
+     *              response=401,
+     *              description="action unauthorized"
+     *          ),
+     *          @OA\Response(
+     *              response=403,
+     *              description="action forbiden"
+     *          ),
+    *          @OA\Response(
+    *              response=404,
+    *              description="aucun résultat trouvé"
+    *          ),
+    *          @OA\Response(
+    *              response=500,
+    *              description="erreur serveur"
+    *          )
+    *)  
+    */
+    public function all()
+    {
+        try{
+            /** @var User $user description */
+            $user = Auth::user();
+
+            if($user->IsCustomer()){
+                $events = Event::where("status","=",Event::STATUS_PUBLISHED)
+                ->with([
+                    'tag',
+                    'type_places' => function ($query) {
+                        $query->select('id', 'event_id', 'nom',"nombre","prix"); // Sélectionner uniquement les colonnes nécessaires
+                    }
+                ])
+                ->orderBy('date', 'asc');
+            }
+            else if($user->IsOrganiser()){
+                $events = Event::where("user_id",$user->id)
+                ->with([
+                    'tag',
+                    'type_places' => function ($query) {
+                        $query->select('id', 'event_id', 'nom',"nombre","prix"); // Sélectionner uniquement les colonnes nécessaires
+                    }
+                ])
+                ->orderBy('date', 'asc');
+                
+            }
+            else{
+                $events = Event::all();
+                $events= $events->sortByDesc("date");
+            }
+
+                
+            if(count($events)==0){
+                return ApiResponse::success([],"No event found");
+            }
+            // return response()->json($events);
+            return ApiResponse::success($events);
+        }
+        catch(Exception $e){
+            return ApiResponse::error("server error",500,$e->getMessage());
+        }
+    }
+
+
     /**
     * @OA\Get(
     *      path="/api/grouped-event",
@@ -938,7 +1012,7 @@ class EventController extends Controller
                         return $query->where('event_id', $event->id);
                     }),
                 ],
-                'codes.*.price' => ['required',"decimal:1,3",'min:0.001','max:1'],
+                'codes.*.price' => ['required',"integer",'min:1','max:98'],
                 'codes.*.expire_at' => ["nullable","date",'after_or_equal:' . Carbon::now()->addDays(3)->toDateString()],
             ]);
 
@@ -948,10 +1022,12 @@ class EventController extends Controller
             // create all codes promo
             for($i=0;$i<count($data["codes"]);$i++){
                 $data["codes"][$i]["event_id"]= $event->id;
+                $data["codes"][$i]["price"]= $data["codes"][$i]["price"] / 100;
 
                 if(!isset($data["codes"][$i]["code"])){
                     $data["codes"][$i]["code"] = $this->GenerateRandomUniqueCode();
                 }
+
 
                 $code= Code::create($data["codes"][$i]);
                 array_push($codes,$code);
