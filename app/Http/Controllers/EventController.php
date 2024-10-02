@@ -114,26 +114,28 @@ class EventController extends Controller
             if($user->IsCustomer()){
                 $events = Event::where("status","=",Event::STATUS_PUBLISHED)
                 ->with([
-                    'tag',
+                    'tag',"codes",
                     'type_places' => function ($query) {
                         $query->select('id', 'event_id', 'nom',"nombre","prix"); // Sélectionner uniquement les colonnes nécessaires
                     }
                 ])
-                ->orderBy('date', 'asc');
+                ->orderBy('date', 'asc')
+                ->get();
             }
             else if($user->IsOrganiser()){
                 $events = Event::where("user_id",$user->id)
                 ->with([
-                    'tag',
+                    'tag',"codes",
                     'type_places' => function ($query) {
                         $query->select('id', 'event_id', 'nom',"nombre","prix"); // Sélectionner uniquement les colonnes nécessaires
                     }
                 ])
-                ->orderBy('date', 'asc');
+                ->orderBy('date', 'asc')
+                ->get();
                 
             }
             else{
-                $events = Event::all();
+                $events = Event::with(["tag","type_places","codes","user"])->get();
                 $events= $events->sortByDesc("date");
             }
 
