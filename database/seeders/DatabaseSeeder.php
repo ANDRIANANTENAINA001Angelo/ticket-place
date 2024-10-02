@@ -47,8 +47,37 @@ class DatabaseSeeder extends Seeder
         //     "user_id"=>$organiser->id
         // ]);
 
-        // \App\Models\Tag::factory(3)->create();
-
+        \App\Models\Tag::factory()->create([
+            "label"=>"Théatre"
+        ]);
+        
+        \App\Models\Tag::factory()->create([
+            "label"=>"Spéctacle"
+        ]);
+        \App\Models\Tag::factory()->create([
+            "label"=>"Concert"
+        ]);
+        \App\Models\Tag::factory()->create([
+            "label"=>"Cinéma"
+        ]);
+        \App\Models\Tag::factory()->create([
+            "label"=>"Foire"
+        ]);
+        \App\Models\Tag::factory()->create([
+            "label"=>"Séminaire"
+        ]);
+        \App\Models\Tag::factory()->create([
+            "label"=>"Culture"
+        ]);
+        \App\Models\Tag::factory()->create([
+            "label"=>"Sport et Loisir"
+        ]);
+        \App\Models\Tag::factory()->create([
+            "label"=>"Festival"
+        ]);
+        \App\Models\Tag::factory()->create([
+            "label"=>"Autre"
+        ]);
 
     }
 }
