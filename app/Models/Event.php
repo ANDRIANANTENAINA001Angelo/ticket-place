@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class Event extends Model
 {
@@ -134,6 +135,7 @@ public function getUpdatedAtAttribute($value)
     {
         return Attribute::make(
             get: fn (?string $value) => $value ? FileManip::PathToUrl($value) : null,
+            // get: fn (?string $value) => $value ? Storage::path($value) : null,
         );
     }
 

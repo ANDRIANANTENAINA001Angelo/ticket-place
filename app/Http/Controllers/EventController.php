@@ -306,6 +306,11 @@ class EventController extends Controller
                 "tag_id"=>["required","integer","exists:tags,id"],
                 "image"=>["nullable","file","max:10240"]
             ]);
+
+            if($request->hasFile("image")){
+                $data["image"]= $this->saveImage($request);
+            }
+
  
             $data["status"]= Event::STATUS_CREATED;
             $data["user_id"]= $user->id;
@@ -313,7 +318,6 @@ class EventController extends Controller
 
 
             $event = Event::create($data);
-            // $event->tags()->sync($data["tags"]);
             return ApiResponse::success($event,"Event created");
         }
         catch(Exception $e){
