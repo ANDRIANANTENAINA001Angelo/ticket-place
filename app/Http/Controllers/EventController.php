@@ -312,7 +312,8 @@ class EventController extends Controller
             }
 
  
-            $data["status"]= Event::STATUS_CREATED;
+            // $data["status"]= Event::STATUS_CREATED;
+            $data["status"]= Event::STATUS_PENDING;
             $data["user_id"]= $user->id;
             
 
@@ -999,8 +1000,8 @@ class EventController extends Controller
                 return ApiResponse::success([],"Event not found");
             }
 
-            if($event->IsPublished() || $event->IsFinished()){
-                return ApiResponse::error("You can't add place to event published or finished",401);
+            if( $event->IsFinished()){
+                return ApiResponse::error("You can't add code promo to event finished",401);
             }
 
             $user_id= Auth::user()->id;
@@ -1021,8 +1022,6 @@ class EventController extends Controller
                 'codes.*.price' => ['required',"integer",'min:1','max:98'],
                 'codes.*.expire_at' => ["nullable","date",'after_or_equal:' . Carbon::now()->addDays(3)->toDateString()],
             ]);
-
-
 
             $codes= [];
             // create all codes promo

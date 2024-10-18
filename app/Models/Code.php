@@ -35,6 +35,10 @@ class Code extends Model
         return false;
     }
 
+    public function getPriceAttribute(float $value){
+        return $value * 100 ;
+    }
+
     // Accessor pour formater created_at
     public function getCreatedAtAttribute($value)
     {

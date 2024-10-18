@@ -31,10 +31,11 @@ class Cart extends Model
         "status",
         // "montant_reduite",
         "code_id",
-        "organiser_id"
+        "organiser_id",
+        "event_id"
     ];
 
-   
+    
     protected $appends =["montant_reduite","organiser_id"];
 
     public function getMontantReduiteAttribute(){

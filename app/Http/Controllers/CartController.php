@@ -522,6 +522,10 @@ class CartController extends Controller
 
                 $tickets = $this->generateTicketEachItems($cart,$user->id);
                 
+                $event_id= $tickets[0]->type_place->event->id;
+
+                $dataUpdated["event_id"]=$event_id;
+                
                 $cart->update($dataUpdated);
                 $cart->save();
                 

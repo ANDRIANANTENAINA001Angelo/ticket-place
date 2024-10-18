@@ -243,8 +243,6 @@ class UserController extends Controller
             if($request->hasFile("image")){
                 $data["image"]= $this->saveImage($request);
             }
-
-
             
             $user->update($data);
             $user->save();

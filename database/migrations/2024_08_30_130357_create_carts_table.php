@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Code;
+use App\Models\Event;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->integer("montant")->default(0);
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Code::class)->nullable();
+            $table->foreignIdFor(Event::class)->nullable();
             $table->timestamps();
         });
     }
