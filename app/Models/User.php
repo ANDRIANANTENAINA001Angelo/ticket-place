@@ -33,7 +33,9 @@ class User extends Authenticatable
         "type",
         'email',
         'password',
-        "image"
+        "image",
+        "google_id",
+        "avatar"
     ];
 
     /**

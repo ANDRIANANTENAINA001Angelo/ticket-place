@@ -3,7 +3,7 @@
 
 {{ $content }}
 
-@component('mail::button', ['url' => config('app.url')])
+@component('mail::button', ['url' => config('app.frontend_url')])
 Visitez {{ config('app.name') }}
 @endcomponent
 

@@ -3,6 +3,7 @@
 use App\ApiResponse;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -47,6 +48,11 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->midd
 Route::get("/app/failed-auth",function(){
     return ApiResponse::error("Failed Authentication",401);
 })->name('failed-auth');
+
+//-------- google
+Route::get('auth/google', [GoogleAuthController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+
 
 // ------- email
 Route::post("send-verification-mail",[EmailVerificationNotificationController::class,'store'])->middleware(["auth:sanctum"]);
