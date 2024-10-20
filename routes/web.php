@@ -21,4 +21,6 @@ Route::get('/', function () {
 //     return "hello world";
 // });
 
+
+
 require __DIR__.'/auth.php';
