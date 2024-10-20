@@ -512,7 +512,11 @@ class CartController extends Controller
                 return ApiResponse::error("You must add one or more item to cart before purchased it.",401);
             }
             
-            if($this->validateItemsNumber($cart)){
+            $event_id= $this->validateItemsNumber($cart);
+
+            // dd($event_id);
+
+            if($event_id != false){
                 $dataUpdated["status"]="purchased";
 
                 if(count($request->all())>0){
@@ -523,9 +527,10 @@ class CartController extends Controller
                 $tickets = $this->generateTicketEachItems($cart,$user->id);
                 
                 $ticket= Ticket::with("type_place")->where("id",$tickets[0]->id)->first();
-                $event_id= $ticket->type_place->event->id;
+                
+                $dataUpdated["event_id"]=(int)$event_id;
 
-                $dataUpdated["event_id"]=$event_id;
+                // dd($dataUpdated);
                 
                 $cart->update($dataUpdated);
                 $cart->save();
@@ -549,7 +554,7 @@ class CartController extends Controller
 
     }
 
-    private function validateItemsNumber(Cart $cart):bool{
+    private function validateItemsNumber(Cart $cart):bool|string{
         try{
             $items = $cart->items;
             $events_id = [];
@@ -571,7 +576,9 @@ class CartController extends Controller
                 return false;
             }
 
-            return true;
+            return $events_id[0];
+
+            // return true;
 
         }
         catch(Exception $e){

@@ -20,7 +20,8 @@ class Cart extends Model
         "status",
         "montant",
         "user_id",
-        "code_id"
+        "code_id",
+        "event_id"
     ];
 
     protected $hidden=[
