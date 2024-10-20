@@ -9,6 +9,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class PasswordResetLinkController extends Controller
 {
@@ -63,33 +67,80 @@ class PasswordResetLinkController extends Controller
      *          ),
      *)  
      */
+    // public function store(Request $request): JsonResponse
+    // {
+
+    //     try{
+
+    //         $request->validate([
+    //             'email' => ['required', 'email',"exists:users,email"],
+    //         ]);
+    
+    //         // We will send the password reset link to this user. Once we have attempted
+    //         // to send the link, we will examine the response then see the message we
+    //         // need to show to the user. Finally, we'll send out a proper response.
+    //         $status = Password::sendResetLink(
+    //             $request->only('email')
+    //         );
+    
+    //         if ($status != Password::RESET_LINK_SENT) {
+    //             throw ValidationException::withMessages([
+    //                 'email' => [__($status)],
+    //             ]);
+    //         }
+    
+    //         // return response()->json(['status' => __($status)]);
+    //         return ApiResponse::success(['status' => __($status)],"Lien reset password send");
+    //     }
+    //     catch(Exception $e){
+    //         return ApiResponse::error("Server error",500,$e->getMessage());
+    //     }
+    // }
+
+
     public function store(Request $request): JsonResponse
     {
-
-        try{
-
+        try {
+            // Valider l'e-mail
             $request->validate([
-                'email' => ['required', 'email',"exists:users,email"],
+                'email' => ['required', 'email', 'exists:users,email'],
             ]);
-    
-            // We will send the password reset link to this user. Once we have attempted
-            // to send the link, we will examine the response then see the message we
-            // need to show to the user. Finally, we'll send out a proper response.
-            $status = Password::sendResetLink(
-                $request->only('email')
-            );
-    
-            if ($status != Password::RESET_LINK_SENT) {
+
+            // Trouver l'utilisateur avec cet e-mail
+            $user = DB::table('users')->where('email', $request->email)->first();
+            if (!$user) {
                 throw ValidationException::withMessages([
-                    'email' => [__($status)],
+                    'email' => ['User not found.'],
                 ]);
             }
-    
-            // return response()->json(['status' => __($status)]);
-            return ApiResponse::success(['status' => __($status)],"Lien reset password send");
-        }
-        catch(Exception $e){
-            return ApiResponse::error("Server error",500,$e->getMessage());
+
+            // Générer le token de reset password
+            $token = Str::random(60);
+
+            // Supprimer d'anciens tokens avant d'ajouter le nouveau
+            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+
+            // Enregistrer le nouveau token dans la table password_resets
+            DB::table('password_reset_tokens')->insert([
+                'email' => $user->email,
+                'token' => bcrypt($token),
+                'created_at' => Carbon::now(),
+            ]);
+
+            // Construire l'URL personnalisée vers Next.js frontend
+            $frontendUrl = env('FRONTEND_URL');
+            $resetUrl = "{$frontendUrl}/reset-password/{$token}?email={$user->email}";
+
+            // Envoyer l'e-mail avec le lien vers le frontend
+            Mail::send('emails.password-reset', ['resetUrl' => $resetUrl], function ($message) use ($user) {
+                $message->to($user->email)
+                        ->subject('Reset Password Notification');
+            });
+
+            return ApiResponse::success(['status' => 'Reset link sent successfully'], "Lien reset password send");
+        } catch (Exception $e) {
+            return ApiResponse::error("Server error", 500, $e->getMessage());
         }
     }
+
 }
