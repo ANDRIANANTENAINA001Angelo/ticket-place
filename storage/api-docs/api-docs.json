@@ -284,6 +284,10 @@
                                         "type": "string",
                                         "format": "password",
                                         "example": "password123"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "customer"
                                     }
                                 },
                                 "type": "object"

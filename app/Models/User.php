@@ -57,6 +57,14 @@ class User extends Authenticatable
     ];
 
 
+    public function isEmailVerified(){
+        if(is_null($this->email_verified_at)){
+            return false;
+        }
+        return true;
+    }
+
+
     protected function image(): Attribute
     {
         return Attribute::make(

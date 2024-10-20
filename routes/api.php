@@ -64,8 +64,8 @@ Route::get("/email-already-verified",function(){
 
 
 //USERS 
-Route::get("/users",[UserController::class,"index"]) ;
-Route::get("/users/{user}",[UserController::class,"show"]) ;
+Route::get("/users",[UserController::class,"index"])->middleware(CheckEventNotification::class);
+Route::get("/users/{user}",[UserController::class,"show"])->middleware(CheckEventNotification::class);
 Route::put("/users/{user}",[UserController::class,"update"])->middleware(['auth:sanctum']);
 Route::delete("/users/{user}",[UserController::class,"destroy"])->middleware(['auth:sanctum']);
 Route::get('/profile', [UserController::class,"profile"])->middleware(['auth:sanctum',CheckUpdateMiddleware::class]);
@@ -85,23 +85,23 @@ Route::post("/generate-code",[CodeController::class,"GenerateRandomUniqueCode"])
 //TAGS
 Route::resource("tags",TagController::class)->except(["index","show"])->middleware(["auth:sanctum"]);
 Route::get("tags",[TagController::class,"index"])->middleware(CheckUpdateMiddleware::class);
-Route::get("tags/{id}",[TagController::class,"show"]) ;
+Route::get("tags/{id}",[TagController::class,"show"])->middleware(CheckEventNotification::class);
 
 
 //EVENTS
 Route::resource("events",EventController::class)->middleware(["auth:sanctum"])->except(["create","edit","update","index","show"]);
-Route::get("events",[EventController::class,"index"]) ;
+Route::get("events",[EventController::class,"index"])->middleware(CheckEventNotification::class);
 Route::get("events-all",[EventController::class,"all"])->middleware("auth:sanctum");
-Route::get("events/{id}",[EventController::class,"show"]) ;
+Route::get("events/{id}",[EventController::class,"show"])->middleware(CheckEventNotification::class);
 Route::post("events/{id}",[EventController::class,"update"])->middleware("auth:sanctum");
 Route::post("events/{id}/unapprouval",[EventController::class,"unapproval"])->middleware(["auth:sanctum",IsAdministratorMiddleware::class]);
-Route::get("/search-event",[EventController::class,"search"]) ;
-Route::get("/grouped-event",[EventController::class,"grouped"]) ;
-Route::get("/search-event-price",[EventController::class,"searchPrice"]) ;
-Route::get("/search-event-text",[EventController::class,"searchText"]) ;
-Route::get("/finished-events",[EventController::class,"finished"]) ;
-Route::get("/created-events",[EventController::class,"created"]) ;
-Route::get("/famous-events",[EventController::class,"famousEvent"]) ;
+Route::get("/search-event",[EventController::class,"search"])->middleware(CheckEventNotification::class);
+Route::get("/grouped-event",[EventController::class,"grouped"])->middleware(CheckEventNotification::class);
+Route::get("/search-event-price",[EventController::class,"searchPrice"])->middleware(CheckEventNotification::class);
+Route::get("/search-event-text",[EventController::class,"searchText"])->middleware(CheckEventNotification::class);
+Route::get("/finished-events",[EventController::class,"finished"])->middleware(CheckEventNotification::class);
+Route::get("/created-events",[EventController::class,"created"])->middleware(CheckEventNotification::class);
+Route::get("/famous-events",[EventController::class,"famousEvent"])->middleware(CheckEventNotification::class);
 Route::post("/events/{id}/publish",[EventController::class,"publish"])->middleware(["auth:sanctum"]);    
 Route::get("/events/{id}/tickets",[TicketController::class,"eventTickets"])->middleware(["auth:sanctum"]);
 
@@ -109,8 +109,8 @@ Route::get("/events/{id}/tickets",[TicketController::class,"eventTickets"])->mid
 //Type events (vip, normale)
 Route::post("/events/{id}/add-type-place",[EventController::class,"addTypePlace"])->middleware(["auth:sanctum"]);
 Route::post("/events/{id}/add-code-promo",[EventController::class,"addCodePromo"])->middleware(["auth:sanctum"]);
-Route::get("/event-type-place",[TypePlaceController::class,"index"]) ;
-Route::get("/event-type-place/{id}",[TypePlaceController::class,"show"]) ;
+Route::get("/event-type-place",[TypePlaceController::class,"index"])->middleware(CheckEventNotification::class);
+Route::get("/event-type-place/{id}",[TypePlaceController::class,"show"])->middleware(CheckEventNotification::class);
 Route::put("/event-type-place/{id}",[TypePlaceController::class,"update"])->middleware(["auth:sanctum"]);
 Route::delete("/event-type-place/{id}",[TypePlaceController::class,"destroy"])->middleware(["auth:sanctum"]);
 
@@ -139,6 +139,6 @@ Route::get("/test/get-reference/{id}",[TestController::class,"reference"])->midd
 
 //dashboard
 
-Route::get("/dashboard/resume",[DashboardController::class,"getResume"])->middleware(["auth:sanctum" ]);
-Route::get("/dashboard/sales",[DashboardController::class,"getGetSales"])->middleware(["auth:sanctum" ]);
-Route::get("/dashboard/year-stat/{year}",[DashboardController::class,"getStatYears"])->middleware(["auth:sanctum" ]);
+Route::get("/dashboard/resume",[DashboardController::class,"getResume"])->middleware(["auth:sanctum",CheckEventNotification::class]);
+Route::get("/dashboard/sales",[DashboardController::class,"getGetSales"])->middleware(["auth:sanctum",CheckEventNotification::class]);
+Route::get("/dashboard/year-stat/{year}",[DashboardController::class,"getStatYears"])->middleware(["auth:sanctum",CheckEventNotification::class]);

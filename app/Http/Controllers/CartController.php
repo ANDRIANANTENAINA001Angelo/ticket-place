@@ -522,7 +522,8 @@ class CartController extends Controller
 
                 $tickets = $this->generateTicketEachItems($cart,$user->id);
                 
-                $event_id= $tickets[0]->type_place->event->id;
+                $ticket= Ticket::with("type_place")->where("id",$tickets[0]->id)->first();
+                $event_id= $ticket->type_place->event->id;
 
                 $dataUpdated["event_id"]=$event_id;
                 
@@ -658,7 +659,8 @@ class CartController extends Controller
             $res["montant"]=$cart->montant;
             $res["pourcentage"]=$code->price;
             $res["code_id"]=$code->id;
-            $res["montant_reduite"]= $cart->montant - ($cart->montant * $code->price);
+            $res["montant_bonus"]= ($cart->montant * ($code->price/100));
+            $res["montant_reduite"]= $cart->montant - ($cart->montant * ($code->price/100));
     
             if($api_response){
                 return ApiResponse::success($res,"Evaluation with code");

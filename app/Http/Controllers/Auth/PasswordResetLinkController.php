@@ -128,13 +128,13 @@ class PasswordResetLinkController extends Controller
             ]);
 
             // Construire l'URL personnalisée vers Next.js frontend
-            $frontendUrl = env('FRONTEND_URL');
+            $frontendUrl = env('FRONTEND_URL',"http://localhost:3000");
             $resetUrl = "{$frontendUrl}/reset-password/{$token}?email={$user->email}";
 
             // Envoyer l'e-mail avec le lien vers le frontend
             Mail::send('emails.password-reset', ['resetUrl' => $resetUrl], function ($message) use ($user) {
                 $message->to($user->email)
-                        ->subject('Reset Password Notification');
+                        ->subject('RéInitialisation de Mot de Passe');
             });
 
             return ApiResponse::success(['status' => 'Reset link sent successfully'], "Lien reset password send");

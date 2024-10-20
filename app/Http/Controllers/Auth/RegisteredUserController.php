@@ -56,6 +56,11 @@ class RegisteredUserController extends Controller
     *                      type="string",
     *                      format="password",
     *                      example="password123"
+    *                  ),
+    *                  @OA\Property(
+    *                      property="type",
+    *                      type="string",
+    *                      example="customer"
     *                  )
     *              )
     *          )
@@ -83,6 +88,7 @@ class RegisteredUserController extends Controller
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
                 'password' => ['required', 'max:255','min:4'],
                 'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
+                'type' => ['nullable','string',Rule::in(["customer", "organiser"])],
             ]);
             
             $user = User::create([
@@ -91,7 +97,7 @@ class RegisteredUserController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'password' => Hash::make($request->password),
-                'type'=> "customer"
+                'type'=> $request->type
             ]);
     
             $cart = Cart::create([

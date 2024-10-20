@@ -35,7 +35,6 @@ class AppNotification extends Notification implements ShouldQueue
             array_push($channels,"mail");
         }
 
-
         return $channels;
     }
 

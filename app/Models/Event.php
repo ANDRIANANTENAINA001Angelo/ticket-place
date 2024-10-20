@@ -54,6 +54,12 @@ public function getDateAttribute($value)
 }
 
 
+// Accessor pour obtenir la date brute (objet Carbon)
+public function getRawDateAttribute()
+{
+    return Carbon::parse($this->attributes['date']);
+}
+
 
 // Accessor pour formater l'heure
 public function getHeureAttribute($value)
