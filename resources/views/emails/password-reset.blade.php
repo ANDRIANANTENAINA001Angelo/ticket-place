@@ -11,7 +11,7 @@
     text-decoration: none;
     border-radius: 5px;
 ">
-    Ré-Initialiser Maintenant
+    Réinitialiser Maintenant
 </a>
 
 <p>Si vous n'avez pas demandé de réinitialisation de mot de passe, aucune autre action n'est requise.</p>

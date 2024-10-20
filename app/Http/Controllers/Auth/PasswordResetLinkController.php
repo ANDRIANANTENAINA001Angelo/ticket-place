@@ -134,7 +134,7 @@ class PasswordResetLinkController extends Controller
             // Envoyer l'e-mail avec le lien vers le frontend
             Mail::send('emails.password-reset', ['resetUrl' => $resetUrl], function ($message) use ($user) {
                 $message->to($user->email)
-                        ->subject('RéInitialisation de Mot de Passe');
+                        ->subject('Réinitialisation de Mot de Passe');
             });
 
             return ApiResponse::success(['status' => 'Reset link sent successfully'], "Lien reset password send");
