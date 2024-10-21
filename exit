@@ -1,0 +1,416 @@
+[33mcommit 5282c7c975a7499f5d261af4c6f74d19f7611f22[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sun Oct 20 15:52:30 2024 +0300
+
+    push vendor
+
+[33mcommit f449b97b8ed8c4726c4b4bad1005db2ab25a265b[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sun Oct 20 15:40:15 2024 +0300
+
+    test auht google
+
+[33mcommit 760487a03117e07d26aafff082a172356a247f19[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sun Oct 20 14:27:57 2024 +0300
+
+    fix event notification
+
+[33mcommit 6c7d0b1081453a3cf16076a7c3a25fffef7c66fc[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sun Oct 20 14:03:50 2024 +0300
+
+    fix text
+
+[33mcommit edf00064897d904403a93af8b4d85d0376c66d42[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sun Oct 20 13:59:34 2024 +0300
+
+    event notification
+
+[33mcommit 731c64ab31dff2dfe33d27a7168caa0e938ae637[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sun Oct 20 11:07:23 2024 +0300
+
+    reset pass
+
+[33mcommit 75646de6f3815c51d188f034bdc65c396237962a[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sun Oct 20 10:23:42 2024 +0300
+
+    forgot pass
+
+[33mcommit faa151e82466dd02210766b7b054c6cddfd7417c[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Oct 18 11:26:58 2024 +0300
+
+    fix
+
+[33mcommit 5e54775bb81e60191d25bcd6bc6fdd81a104b6c2[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Oct 2 16:02:30 2024 +0300
+
+    fix image event
+
+[33mcommit 294ca77e2f51d11a59210270673df012ce541a31[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Oct 2 13:46:05 2024 +0300
+
+    label seeder
+
+[33mcommit c6abb805d1b89b45e4c04e470e58ab47e841e0ac[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Oct 2 13:26:09 2024 +0300
+
+    fix all event status
+
+[33mcommit 6f74dd30f5b694376d7d5ccef6e4bfe2163b3649[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Oct 2 13:19:39 2024 +0300
+
+    add all event status
+
+[33mcommit 948f6f41ab3347a0b091ed642e75415461ec695b[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Oct 1 12:48:56 2024 +0300
+
+    update latest
+
+[33mcommit 4a67de58f122c7e19b234e4d15daad8647e1b09d[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Sep 25 10:32:48 2024 +0300
+
+    remove ticket in responses
+
+[33mcommit 4212040959feae9c4930fa58e6ade497ea898eeb[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Sep 24 17:29:31 2024 +0300
+
+    fix order
+
+[33mcommit 33b7de528b1fdd4ef66987e45e3fa5db8260508f[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Sep 24 17:05:30 2024 +0300
+
+    order event
+
+[33mcommit 9662ac3de4d4af71d73bf780fdeaea3b1d87f0ed[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Sep 24 16:39:10 2024 +0300
+
+    order by date
+
+[33mcommit 6947c7ee25048cde32c5805757fc4fe6ef50e34b[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Sep 24 16:12:42 2024 +0300
+
+    fix cart price
+
+[33mcommit ae345ce5af9767ff3bbde79e980554462b448491[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Sep 24 15:27:22 2024 +0300
+
+    dashboard info
+
+[33mcommit c36b991d14fde8c76cad7bf9cd34b3ff59b5553d[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Sep 24 11:50:41 2024 +0300
+
+    update ticket format
+
+[33mcommit 5c926e0541ea8b4b4002b3f754eaf38e0adbdde1[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Sep 24 10:26:20 2024 +0300
+
+    add group event
+
+[33mcommit c81eb5657d598828a3aa9b84574a83e206dd572b[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Sep 24 09:57:06 2024 +0300
+
+    fix ticket format
+
+[33mcommit 0c6c3d02f543dc80537e688f0999408e91ebc8b6[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Sep 17 17:53:48 2024 +0300
+
+    fix pay cart
+
+[33mcommit 90c8c445c57c4eec2598898398fd5e9bddb1ea84[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Mon Sep 16 10:40:22 2024 +0300
+
+    fix status event
+
+[33mcommit 178a053f4760177ee9a446647b147986414a9a44[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Mon Sep 16 10:30:59 2024 +0300
+
+    fix filter
+
+[33mcommit 1fa21d186f2cd620c3b55bbd34c6546923b7d90c[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Sep 13 11:50:30 2024 +0300
+
+    delete telescope
+
+[33mcommit 4e578aefb782e5b05b89780bfda593c05f479483[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Sep 13 11:43:24 2024 +0300
+
+    schedule event status update
+
+[33mcommit b0beb7ddbcf7342431e6f9f45ef27c57956e0fcf[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Sep 12 16:48:56 2024 +0300
+
+    fix and permission
+
+[33mcommit ed99815e911c759306d5413dc04cde67e79af5e7[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Sep 12 09:44:09 2024 +0300
+
+    update tag and add search
+
+[33mcommit 848e04a63ae97b3202e8617be5ce616f3cd7d359[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sat Sep 7 10:33:12 2024 +0300
+
+    update code access
+
+[33mcommit 974a40a7e58527f65790e92936ebd689a7734a41[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Sep 6 12:53:41 2024 +0300
+
+    cart pay, access
+
+[33mcommit e798fec74d9b71786f20819527420d0a5a04f6e1[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Sep 5 18:21:17 2024 +0300
+
+    cors fix
+
+[33mcommit ee4a81104c0515722a2cad2a30953a5039f95096[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Sep 5 17:01:44 2024 +0300
+
+    cast date to readable
+
+[33mcommit def5018ce35d2111911142ddce3e5da45568fb00[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Sep 5 16:37:39 2024 +0300
+
+    add hour to event
+
+[33mcommit cbfddbb2e8e27c4d68d906e6c41b08154a3207de[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Sep 5 15:55:10 2024 +0300
+
+    fix event auth
+
+[33mcommit c3c8dc5f34e458fd443f065f64e8d9d7e9071f07[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Sep 5 09:36:47 2024 +0300
+
+    token access event
+
+[33mcommit 1a9b7df9a862a2663d2d30772ba549c565cd2eb2[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Sep 4 15:35:26 2024 +0300
+
+    cart all
+
+[33mcommit c74c324e4d03b6dcce2d38f7c64c7ce4e81c57a2[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Sep 3 09:46:07 2024 +0300
+
+    image to event
+
+[33mcommit c29f30793156d39d35abe364836e82f018530e10[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sat Aug 31 11:30:40 2024 +0300
+
+    config cors 1
+
+[33mcommit af4aaa08f927c140a73d6c68fe0c978e88d94399[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sat Aug 31 11:11:06 2024 +0300
+
+    cors config
+
+[33mcommit ebddefa37d44a5fc66b7554e6a9cdb21db911357[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Aug 30 22:49:59 2024 +0300
+
+    fix register csrf bug
+
+[33mcommit 41da90930fec4983ac8754e5268a25a7aacd18c5[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Aug 30 22:33:27 2024 +0300
+
+    fix register
+
+[33mcommit 2482ffb8946b8a1bdbbaa4c040527278b692e09b[m
+Merge: 00ef964 3733870
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Aug 30 22:07:30 2024 +0300
+
+    Merge branch 'main' of https://github.com/ANDRIANANTENAINA001Angelo/ticket-place
+
+[33mcommit 00ef964ab7195a9e41b30174af9259054a5a20e1[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Aug 30 22:07:06 2024 +0300
+
+    type place
+
+[33mcommit 3733870cbb49ead9a455c73ed805b2550ca0308e[m
+Author: ANDRIANANTENAINA001Angelo <111114169+ANDRIANANTENAINA001Angelo@users.noreply.github.com>
+Date:   Thu Aug 29 21:52:40 2024 +0300
+
+    Delete .env
+
+[33mcommit d8b3f4f1a302ce34534a4e105c367726a8a73466[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Aug 29 21:51:48 2024 +0300
+
+    delete .env
+
+[33mcommit c0caa659132ae8cb85cf46fd5fe1408d070ba068[m
+Merge: 1127e12 b1ed739
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Aug 29 21:44:32 2024 +0300
+
+    env config
+
+[33mcommit 1127e126ad5446ba271763cc519a6bdd04647630[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Aug 29 21:40:54 2024 +0300
+
+    migration fix
+
+[33mcommit b1ed739bd46d254720ff8caa642d95b35aae8c6a[m
+Author: ANDRIANANTENAINA001Angelo <111114169+ANDRIANANTENAINA001Angelo@users.noreply.github.com>
+Date:   Thu Aug 29 21:31:46 2024 +0300
+
+    Delete .env
+
+[33mcommit 4261d9e2b43fff03fda969d0899f454f1c822c89[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Aug 29 21:29:46 2024 +0300
+
+    typePlaceEvent
+
+[33mcommit 8ffb1693117df16135c0ada14abaafd4e343e64a[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Aug 29 13:53:09 2024 +0300
+
+    auth password
+
+[33mcommit 1dec129b7f745a0d05ee2c6651862a99e58bedbe[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Thu Aug 29 00:44:18 2024 +0300
+
+    event & tag
+
+[33mcommit 2d06f1d27590fdab27f6ed095323e5d81fe1630e[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Aug 28 21:18:35 2024 +0300
+
+    swagger fix config
+
+[33mcommit 214e28d1133366a7e702b4e2406cf4ed3ad99673[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Aug 28 21:01:36 2024 +0300
+
+    swagger fix
+
+[33mcommit a8da485a5522e4176a7e8408bf35c5ebfba7426b[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Aug 28 20:39:34 2024 +0300
+
+    code reduction
+
+[33mcommit 67ec3bd5e8bd62329cf747f4a0b67e8cf89446a4[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Aug 28 14:20:31 2024 +0300
+
+    .env
+
+[33mcommit db7d93cd9e3d78b7ea1b7fc088a3af4a4de9526a[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Aug 28 14:20:09 2024 +0300
+
+    swagger fix server host
+
+[33mcommit 05d06d8cf73d933bef58f8436f822d30b2258578[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Wed Aug 28 14:10:57 2024 +0300
+
+    swagger fix
+
+[33mcommit 6df8430655e3198550351430e8ba6e735a4c9a9e[m
+Merge: 797b80b e0a5a6e
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Aug 27 21:10:49 2024 +0300
+
+    Merge branch 'main' of https://github.com/ANDRIANANTENAINA001Angelo/ticket-place
+
+[33mcommit 797b80bf533783aed880e4aae8a17921494d7dec[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Tue Aug 27 21:10:19 2024 +0300
+
+    users crud
+
+[33mcommit e0a5a6e1a2d4d61be9e6eb35e9ace57d9dc0c51c[m
+Author: ANDRIANANTENAINA001Angelo <111114169+ANDRIANANTENAINA001Angelo@users.noreply.github.com>
+Date:   Sun Aug 25 12:50:57 2024 +0300
+
+    Delete vendor directory
+
+[33mcommit 497271ea54bea0d3564bdf3b51a6de31d0eb467d[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sun Aug 25 12:49:41 2024 +0300
+
+    config env
+
+[33mcommit 3e34575b068800873721e2e505e2118ecb6bd570[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sun Aug 25 00:29:31 2024 +0300
+
+    changes
+
+[33mcommit 3272081714f29d58304a99a97a1077094d90c05b[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Sun Aug 25 00:21:58 2024 +0300
+
+    chandes
+
+[33mcommit 598a3443de1756a9d60f5b0cee2a561cbf861525[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Aug 23 16:11:31 2024 +0300
+
+    swagger config
+
+[33mcommit 3b5542bab1abbfff704132fdb1e3a35c2f3512d1[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Aug 23 15:30:59 2024 +0300
+
+    procfile
+
+[33mcommit 5397781911d665f244ee843cf63b9757cae5d5a6[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Aug 23 15:23:29 2024 +0300
+
+    add docker
+
+[33mcommit b1294611284cb695e19da7ac6ba7a32b0e0404f8[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Aug 23 15:11:13 2024 +0300
+
+    test
+
+[33mcommit 055da5fb6ad5d27bc60036430d93824d9c91301c[m
+Author: ANDRIANANTENAINA001Angelo <morningstar25angelo@gmail.com>
+Date:   Fri Aug 23 15:09:01 2024 +0300
+
+    first commit

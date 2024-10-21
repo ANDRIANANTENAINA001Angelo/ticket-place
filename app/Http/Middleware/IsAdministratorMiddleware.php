@@ -23,11 +23,11 @@ class IsAdministratorMiddleware
             return ApiResponse::error("This action need authentication.",401);
         }
 
-        if($user->IsOrganiser()){
+        if($user->IsAdministrator()){
             return $next($request);
         }
         else{
-            return ApiResponse::error("This action is deserve to Organiser only.",403);
+            return ApiResponse::error("This action is deserve to Admin only.",403);
         }
     }
 }

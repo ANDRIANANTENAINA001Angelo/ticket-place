@@ -67,12 +67,29 @@ class User extends Authenticatable
     }
 
 
+    // protected function image(string $value): Attribute
+    // {
+    //     if(is_null($this->google_id)){
+    //         return Attribute::make(
+    //             get: fn (?string $value) => $value ? FileManip::PathToUrl($value) : null,
+    //         );
+    //     }
+    //     return $value;
+    // }
     protected function image(): Attribute
-    {
-        return Attribute::make(
-            get: fn (?string $value) => $value ? FileManip::PathToUrl($value) : null,
-        );
-    }
+{
+    return Attribute::make(
+        get: function (?string $value) {
+            // Si google_id est null, traiter l'image avec FileManip
+            if (is_null($this->google_id)) {
+                return $value ? FileManip::PathToUrl($value) : null;
+            }
+            // Sinon, retourner la valeur de l'image telle qu'elle est dans la base de données
+            return $value;
+        }
+    );
+}
+
 
     /**
      * Get all of the tickets for the User

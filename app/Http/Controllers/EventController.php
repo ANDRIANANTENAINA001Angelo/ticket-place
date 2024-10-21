@@ -446,6 +446,9 @@ class EventController extends Controller
                 return ApiResponse::error("Action non authoriser",401,"seulement event en attent peut ne pas être approuvé.");
             }
 
+            $event->update(["status"=>Event::STATUS_UNAPPROVAL]);
+            $event->save();
+
             return ApiResponse::success($event);
         }
         catch(Exception $e){
