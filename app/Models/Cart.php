@@ -37,17 +37,21 @@ class Cart extends Model
     ];
 
     
-    protected $appends =["montant_reduite","organiser_id"];
+    protected $appends =["montant_reduite","organiser_id","date"];
 
     public function getMontantReduiteAttribute(){
         if(isset($this->code_id)){
             $code = Code::find($this->code_id);
-            $price = $this->montant - ($this->montant * $code->price);
+            $price = $this->montant - ($this->montant * ($code->price/100));
             return $price;
         }
         else{
             return $this->montant;
         }
+    }
+
+    public function getDateAttribute(){
+        return Carbon::parse($this->attributes["updated_at"])->toDateString();
     }
 
     // Accessor pour formater updated_at
@@ -66,6 +70,10 @@ class Cart extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(Event::class);
+    }
 
     /**
      * Get the code that owns the Cart

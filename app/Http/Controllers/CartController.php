@@ -718,7 +718,7 @@ class CartController extends Controller
 
             if(!$user->IsCustomer()){
                 $carts= Cart::where("status","purchased")
-                        ->with("code","user","items","items.type_place")
+                        ->with("code","user","items","items.type_place","event")
                         ->orderBy('created_at', 'asc')        
                         ->get();
                 
@@ -740,6 +740,7 @@ class CartController extends Controller
             else{
                 $carts= $carts= Cart::where("status","purchased")
                             ->orderBy('created_at', 'asc')
+                            ->with("event")
                             ->where("user_id",$user->id)
                             ->get();
             }
