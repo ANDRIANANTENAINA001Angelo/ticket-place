@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+
+
 
 class UserController extends Controller
 {
@@ -242,6 +245,10 @@ class UserController extends Controller
 
             if($request->hasFile("image")){
                 $data["image"]= $this->saveImage($request);
+            }
+
+            if(isset($data["password"])){
+                $data["password"]= Hash::make($data["password"]);
             }
             
             $user->update($data);
