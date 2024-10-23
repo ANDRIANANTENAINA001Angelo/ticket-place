@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
@@ -54,6 +55,13 @@ class GoogleAuthController extends Controller
                 ]
             );
 
+            $cart = Cart::create([
+                "status"=>"created",
+                "montant"=>0,
+                "user_id"=>$user->id
+            ]);
+
+            
             // Générer un token JWT ou API pour Next.js
             $token = $user->createToken(Str::random(8))->plainTextToken;
 

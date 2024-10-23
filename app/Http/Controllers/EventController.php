@@ -135,8 +135,9 @@ class EventController extends Controller
                 
             }
             else{
-                $events = Event::with(["tag","type_places","codes","user"])->get();
-                $events= $events->sortByDesc("date");
+                $events = Event::with(["tag","type_places","codes","user"])
+                            ->orderBy('date', 'asc')            
+                            ->get();
             }
 
                 

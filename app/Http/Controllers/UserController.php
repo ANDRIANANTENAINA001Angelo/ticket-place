@@ -236,7 +236,7 @@ class UserController extends Controller
                 'email' => ['nullable', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
                 'password' => ['nullable', 'max:255','min:4'],
                 'phone' => ['nullable', 'max:10','min:10',"string",'unique:'.User::class],
-                'type' => ['nullable','string',Rule::in("customer", "organiser", "administrator")],
+                // 'type' => ['nullable','string',Rule::in("customer", "organiser", "administrator")],
                 "image"=>["nullable","file","max:10240"]
             ]);
 
@@ -263,7 +263,7 @@ class UserController extends Controller
             return $image_path;
         }
         catch(Exception $e){
-            return ApiResponse::error("server error",$e->getMessage());
+            return ApiResponse::error("server error",500,$e->getMessage());
         }
     }
 
