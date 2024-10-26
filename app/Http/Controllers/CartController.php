@@ -302,11 +302,16 @@ class CartController extends Controller
                         "type_place_id"=>$data["items"][$i]["type_place_id"],
                         "cart_id"=>$cart->id,
                     ]);
+                    $type_place = TypePlace::find($data["items"][$i]["type_place_id"]);
+                    $event_id = $type_place->event->id;
                     array_push($items,$item);
                 }
 
                 $cart->updatePrice(true);
                 
+                $cart->event_id = $event_id;
+                $cart->save();
+
                 return ApiResponse::success($items,"Items updated successful");
             }
             else{
