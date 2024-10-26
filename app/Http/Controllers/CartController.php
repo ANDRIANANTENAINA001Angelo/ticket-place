@@ -144,10 +144,13 @@ class CartController extends Controller
             $cart = $user->getCart();
             $storedItems= $cart->items;
             
+            $event_id=null;
+            
             $items= [];
             for ($i=0;$i<count($data["items"]);$i++){
                 // verify that event is published
                 $type_place= TypePlace::find($data["items"][$i]["type_place_id"]);
+                $event_id= $type_place->event->id;
                 if($type_place->event->isPublished()){
                     
                     //update if place already in the cart
@@ -157,20 +160,16 @@ class CartController extends Controller
                             if($storedItem["type_place_id"]==$data["items"][$i]["type_place_id"]){
                                 $item = Item::find($storedItem->id);
 
-                                // $price += $item->type_place->prix * $item->nombre;
-
                                 $item->update([
                                     "nombre"=> $item->nombre + $data["items"][$i]["nombre"]
                                 ]);
                                 $item->save();
-
                                 
                                 array_push($items,$item);
                             }
                         }
                     }
                     else{
-                        // dd("don't contain's the id");
                         $item = Item::create([
                             "nombre"=>$data["items"][$i]["nombre"],
                             "type_place_id"=>$data["items"][$i]["type_place_id"],
@@ -178,7 +177,6 @@ class CartController extends Controller
                         ]);
                         
                         array_push($items,$item);
-                        // dd("don't contain's the id, and created");
                     }
                     
                 }
@@ -187,8 +185,14 @@ class CartController extends Controller
                 }
                     
             }
+
             $cart->updatePrice(true);
-            // dd("Price updated");
+
+            if(is_null($cart->event_id)){
+                $cart->event_id = $event_id;
+                $cart->save();
+            }
+
             return ApiResponse::success([],"Items add to current cart");  
         } catch (Exception $e) {
             return ApiResponse::error("server error",500,$e->getMessage());
@@ -657,12 +661,15 @@ class CartController extends Controller
             $code = Code::where("code",$data["code"])->get()[0];
 
 
-
             /** @var User $user description */
             $user = Auth::user();
             /** @var Cart $cart description */
             $cart= $user->getCart();
-            
+
+            if($code->event_id != $cart->event_id){
+                return ApiResponse::error("Code Invalid, code for other event",401);
+            }
+
             $res["montant"]=$cart->montant;
             $res["pourcentage"]=$code->price;
             $res["event_id"] = $code->event_id;
@@ -680,7 +687,6 @@ class CartController extends Controller
         }
 
     }
-
 
         
     /**
