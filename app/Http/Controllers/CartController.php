@@ -501,8 +501,7 @@ class CartController extends Controller
             $user = Auth::user();
             if($user->IsAdministrator()){
                 return ApiResponse::error("Administrator have not Cart",400);
-            }
-            
+            }            
             
             $cart = $user->getCart();
             
@@ -514,14 +513,14 @@ class CartController extends Controller
             
             $event_id= $this->validateItemsNumber($cart);
 
-            // dd($event_id);
-
             if($event_id != false){
                 $dataUpdated["status"]="purchased";
 
                 if(count($request->all())>0){
                     $reduction = $this->evaluate($request,false);
-                    $dataUpdated["code_id"]= $reduction["code_id"];
+                    if($reduction["event_id"] == $event_id){
+                        $dataUpdated["code_id"]= $reduction["code_id"];
+                    }
                 }
 
                 $tickets = $this->generateTicketEachItems($cart,$user->id);
@@ -654,10 +653,11 @@ class CartController extends Controller
             $data = $request->validate([
                 "code"=>["required","string","exists:codes,code"]
             ]);
-            // dd($request,$data);
     
             $code = Code::where("code",$data["code"])->get()[0];
-            // dd($code);
+
+
+
             /** @var User $user description */
             $user = Auth::user();
             /** @var Cart $cart description */
@@ -665,6 +665,7 @@ class CartController extends Controller
             
             $res["montant"]=$cart->montant;
             $res["pourcentage"]=$code->price;
+            $res["event_id"] = $code->event_id;
             $res["code_id"]=$code->id;
             $res["montant_bonus"]= ($cart->montant * ($code->price/100));
             $res["montant_reduite"]= $cart->montant - ($cart->montant * ($code->price/100));

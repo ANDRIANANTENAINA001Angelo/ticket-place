@@ -79,5 +79,69 @@ class DatabaseSeeder extends Seeder
             "label"=>"Autre"
         ]);
 
+        \App\Models\Event::factory()->create([
+            "titre"=> "AFTER EXAMS PARTY",
+            "description"=>null,
+            "localisation"=>"Ivandry, Antananarivo",
+            "date"=> "2024-09-10",
+            "heure"=> "20:00",
+            "user_id"=> 1,
+            "tag_id"=> 3,
+            "image"=> "event/image/after.jpeg"
+        ]);
+
+
+        \App\Models\TypePlace::factory()->create([
+            "nom"=>"simple",
+            "nombre"=> 0,
+            "is_limited"=>false,
+            "prix"=>5000,
+            "event_id"=>1
+        ]);
+
+
+        \App\Models\TypePlace::factory()->create([
+            "nom"=>"VIP",
+            "nombre"=> 10,
+            "is_limited"=>true,
+            "prix"=>20000,
+            "event_id"=>1
+        ]);
+
+
+
+
+        \App\Models\Event::factory()->create([
+            "titre"=> "PRIME FRIDAY",
+            "description"=>null,
+            "localisation"=>"Rex, Fianarantsoa",
+            "date"=> "2024-19-03",
+            "heure"=> "20:00",
+            "user_id"=> 1,
+            "tag_id"=> 4,
+            "image"=> "event/image/prime.jpeg"
+        ]);
+
+        
+        \App\Models\TypePlace::factory()->create([
+            "nom"=>"simple",
+            "nombre"=> 0,
+            "is_limited"=>false,
+            "prix"=>5000,
+            "event_id"=>2
+        ]);
+
+
+        \App\Models\TypePlace::factory()->create([
+            "nom"=>"VIP",
+            "nombre"=> 10,
+            "is_limited"=>true,
+            "prix"=>25000,
+            "event_id"=>2
+        ]);
+
+
+
+
     }
 }
