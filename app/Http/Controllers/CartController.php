@@ -188,10 +188,8 @@ class CartController extends Controller
 
             $cart->updatePrice(true);
 
-            if(is_null($cart->event_id)){
-                $cart->event_id = $event_id;
-                $cart->save();
-            }
+            $cart->event_id = $event_id;
+            $cart->save();
 
             return ApiResponse::success([],"Items add to current cart");  
         } catch (Exception $e) {
